@@ -1,0 +1,33 @@
+{
+  "name": "@heat/lambda",
+  "main": "index",
+  "version": "0.0.1",
+  "license": "MIT",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/heat-js/lambda.git"
+  },
+  "bugs": {
+    "url": "https://github.com/heat-js/lambda/issues"
+  },
+  "dependencies": {
+    "@heat/container": "^0.0.1",
+    "extendable-error": "^0.1.5"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-plugin-transform-es2015-modules-commonjs-optimized": "^6.16.0",
+    "coffeescript": "^2.3.1"
+  },
+  "scripts": {
+    "prepublish": "bash ./build.sh",
+    "postpublish": "yarn cleanup",
+    "cleanup": "rm -f ./{/**,}/*.js; rm -rf error; rm -rf middleware;"
+  },
+  "babel": {
+    "plugins": [
+      "transform-es2015-modules-commonjs-optimized"
+    ]
+  }
+}
