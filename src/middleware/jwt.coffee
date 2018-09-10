@@ -1,14 +1,13 @@
 
-import Middleware from './abstract'
+import Middleware 	from './abstract'
+import jwtDecode	from 'jwt-decode'
 
 export default class JWT extends Middleware
 
 	handle: (app, next) ->
 		try
-			token = app.jwtDecoder app.input.token
+			app.token = jwtDecode app.input.token
 		catch error
 			throw new Error 'Authorisation Error'
-
-		ctx.token = token
 
 		await next()
