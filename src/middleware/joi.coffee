@@ -6,12 +6,15 @@ export default class Joi extends Middleware
 
 	@rules = {}
 
-	constructor:(@fields)->
+	constructor: (@fields) ->
+		super()
+
+	handle: (app, next) ->
+		app.input = await joi.validate app.input, @schema()
+		await next()
 
 	schema: ->
-
 		if not @schema_
-
 			if Array.isArray @fields
 				@schema_ = {}
 
@@ -29,9 +32,3 @@ export default class Joi extends Middleware
 				throw new TypeError 'Argument fields must be an object or array'
 
 		return @schema_
-
-	handle: (app, next) ->
-
-		app.input = await joi.validate app.input, @schema()
-
-		await next()

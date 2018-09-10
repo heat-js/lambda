@@ -8,7 +8,8 @@ export default class Config extends Middleware
 	config:		null
 	promise:	null
 
-	constructor:( @configBuilder )->
+	constructor: (@configBuilder) ->
+		super()
 
 	handle: (app, next) ->
 		if @config
@@ -66,7 +67,6 @@ export default class Config extends Middleware
 
 		return output
 
-
 	parseValues: (params) ->
 		values = {}
 
@@ -77,7 +77,6 @@ export default class Config extends Middleware
 				values[item.Name] = item.Value
 
 		return values
-
 
 	getSsmPaths: (object) ->
 		list = []
