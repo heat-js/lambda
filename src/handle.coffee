@@ -11,4 +11,6 @@ export default (middlewares...) ->
 		app.context = context
 		app.input 	= input
 
-		return await fn app
+		await fn app
+
+		return app.output

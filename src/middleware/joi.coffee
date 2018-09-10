@@ -1,26 +1,37 @@
 
-export default class Joi
+import Middleware 	from './abstract'
+import joi 			from 'joi'
 
-	@constructor: (@rules = {}) ->
+export default class Joi extends Middleware
 
-	@schema = (@fields) ->
-		return new Joi
+	@rules = {}
 
-	handle: () ->
-		if Array.isArray fields
-			schema = {}
-			for field in fields
-				if rule = app.rules[field]
-					schema[field] = rule
-				else
-					throw new Error "No validation rule found for field: #{field}"
+	constructor:(@fields)->
 
-		else if fields instanceof Object
-			schema = fields
+	schema: ->
 
-		else
-			throw new TypeError 'Argument fields must be an object or array'
+		if not @schema_
 
-		return (app, next) ->
-			ctx.input = await app.joi.validate app.input, schema
-			await next()
+			if Array.isArray @fields
+				@schema_ = {}
+
+				for field in @fields
+
+					if rule = Joi.rules[field]
+						@schema_[field] = rule
+					else
+						throw new Error 'No validation rule found for field: ' + field
+
+			else if @fields instanceof Object
+				@schema_ = fields
+
+			else
+				throw new TypeError 'Argument fields must be an object or array'
+
+		return @schema_
+
+	handle: (app, next) ->
+
+		app.input = await joi.validate app.input, @schema()
+
+		await next()

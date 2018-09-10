@@ -1,5 +1,10 @@
-export { default as bootstrap } 		from './bootstrap'
-export { default as env }       		from './env'
-export { default as handle }    		from './handle'
-export { default as ExtendableError }   from './error/extendable-error'
-export { default as ViewableError }    	from './error/viewable-error'
+
+export {
+	default as env
+	EnvParser
+} from './env-parser'
+
+export {
+	default as handle
+	default
+} from './handle'

@@ -1,5 +1,7 @@
 
-export default class JWT
+import Middleware from './abstract'
+
+export default class JWT extends Middleware
 
 	handle: (app, next) ->
 		try

@@ -1,8 +1,10 @@
 
+import Middleware from './abstract'
+
 done 		= false
 promise 	= null
 
-export default class SSM
+export default class SSM extends Middleware
 
 	handle: (app, next) ->
 		if done
@@ -38,7 +40,9 @@ export default class SSM
 			throw error
 
 		if result.InvalidParameters and result.InvalidParameters.length
-			throw new Error "SSM parameter(s) not found - ['ssm:#{result.InvalidParameters.join("', 'ssm:")}']"
+			throw new Error "SSM parameter(s) not found - ['ssm:#{
+				result.InvalidParameters.join "', 'ssm:"
+			}']"
 
 		values = @parseValues result.Parameters
 

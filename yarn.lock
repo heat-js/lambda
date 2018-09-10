@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@heat/container@^0.2.3":
+"@heat/container@^0.0.1":
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/@heat/container/-/container-0.0.1.tgz#174a9f1732498085e622a3da265f9a3077da9a61"
 

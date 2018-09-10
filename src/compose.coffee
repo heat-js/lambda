@@ -1,4 +1,6 @@
 
+import Middleware from './middleware/abstract'
+
 export default (middleware) ->
 	if not Array.isArray middleware
 		throw new TypeError 'Middleware stack must be an array!'
@@ -6,6 +8,11 @@ export default (middleware) ->
 	middleware = middleware.map (fn) ->
 		switch typeof fn
 			when 'function'
+
+				if fn instanceof Middleware
+					instance = new fn
+					return instance.handle.bind instance
+
 				if /^\s*class\s+/.test fn.toString()
 					instance = new fn
 					return instance.handle.bind instance
@@ -30,7 +37,7 @@ export default (middleware) ->
 			fn = middleware[i]
 
 			if i is middleware.length
-				fn = next
+				fn = params[params.length]
 
 			if !fn
 				return Promise.resolve()
