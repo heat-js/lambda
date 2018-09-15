@@ -1,12 +1,14 @@
 
 import Middleware 	from './abstract'
-import KnexClass 	from 'knex'
+import knex 		from 'knex'
 
 export default class Knex extends Middleware
 
 	handle: (app, next) ->
 
-		db = app.knex = new KnexClass app.config.knex
+		db = knex app.config.knex
+
+		app.value 'knex', db
 
 		try
 			await next()
