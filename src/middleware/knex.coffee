@@ -6,7 +6,12 @@ export default class Knex extends Middleware
 
 	handle: (app, next) ->
 
-		db = knex app.config.knex
+		options = if driver = app.config.knex.driver
+			app.config.knex[driver]
+		else
+			app.config.knex
+
+		db = knex options
 
 		app.value 'knex', db
 
