@@ -10,16 +10,16 @@ export default class Joi extends Middleware
 		super()
 
 	handle: (app, next) ->
-		app.input = await joi.validate app.input, @schema()
+		app.input = await joi.validate app.input, @schema(app.joiRules)
 		await next()
 
-	schema: ->
+	schema: (rules) ->
 		if not @schema_
 			if Array.isArray @fields
 				@schema_ = {}
 
 				for field in @fields
-					if rule = app.joiRules[field]
+					if rule = rules[field]
 						@schema_[field] = rule
 					else
 						throw new Error 'No validation rule found for field: ' + field
