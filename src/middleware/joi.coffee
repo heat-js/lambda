@@ -19,8 +19,7 @@ export default class Joi extends Middleware
 				@schema_ = {}
 
 				for field in @fields
-
-					if rule = Joi.rules[field]
+					if rule = app.joiRules[field]
 						@schema_[field] = rule
 					else
 						throw new Error 'No validation rule found for field: ' + field
