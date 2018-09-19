@@ -1,16 +1,19 @@
 
 import Middleware 	from './abstract'
-import KnexClass 	from 'knex'
+import knex 		from 'knex'
 
 export default class Knex extends Middleware
 
 	handle: (app, next) ->
-		if driver = app.config.knex.driver
-			options = app.config.knex[driver]
-		else
-			options = app.config.knex
 
-		db = app.knex = new KnexClass options
+		options = if driver = app.config.knex.driver
+			app.config.knex[driver]
+		else
+			app.config.knex
+
+		db = knex options
+
+		app.value 'knex', db
 
 		try
 			await next()
