@@ -13,4 +13,5 @@ export default (middlewares...) ->
 
 		await fn app
 
-		return app.output
+		if app.has 'output'
+			return app.output
