@@ -53,4 +53,20 @@ export class EnvParser
 
 		return array
 
+	enum: (name, possibilities, defaultValue) ->
+
+		value = @get name, defaultValue
+
+		if not possibilities.includes value
+			throw new TypeError [
+				'Environment variable '
+				name
+				' must contain one of the following values: '
+				possibilities.join ', '
+				'.'
+			].join ''
+
+		return value
+
+
 export default new EnvParser process.env
