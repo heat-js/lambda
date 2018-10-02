@@ -19,9 +19,12 @@ export default (middlewares...) ->
 
 		emitter.emit 'after', app
 
+		handle.app = app
+
 		if app.has 'output'
 			return app.output
 
 	handle.on = emitter.on.bind emitter
+	handle.app = null
 
 	return handle
