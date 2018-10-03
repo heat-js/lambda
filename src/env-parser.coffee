@@ -10,10 +10,17 @@ export class EnvParser
 	get:(name, defaultValue) ->
 		value = @data[name]
 
-		if typeof value is 'undefined'
+		if typeof value isnt 'undefined'
+			return value
+
+		if typeof defaultValue isnt 'undefined'
 			return defaultValue
 
-		return value
+		throw new TypeError [
+			'Environment variable '
+			name
+			' hasn\'t been set.'
+		].join '"'
 
 	str: (name, defaultValue) ->
 		value = @get name, defaultValue
