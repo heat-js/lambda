@@ -8,20 +8,23 @@ export default class Config extends Middleware
 	config:		null
 	promise:	null
 
-	constructor: (@configBuilder) ->
+	constructor: (@configBuilder, @saveInMemory = true) ->
 		super()
 
 	handle: (app, next) ->
-		if @config
-			app.config = @config
-			await next()
-			return
 
-		if @promise
-			await @promise
-			app.config = @config
-			await next()
-			return
+		if @saveInMemory
+
+			if @config
+				app.config = @config
+				await next()
+				return
+
+			if @promise
+				await @promise
+				app.config = @config
+				await next()
+				return
 
 		# start resolving ssm values from the env fields
 		@promise = @resolveSsmValues process.env
