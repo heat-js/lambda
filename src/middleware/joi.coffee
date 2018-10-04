@@ -10,7 +10,7 @@ export default class Joi extends Middleware
 		super()
 
 	handle: (app, next) ->
-		app.input = await joi.validate app.input, @schema(app.joiRules)
+		app.input = await joi.validate app.input, @schema app.rules
 		await next()
 
 	schema: (rules) ->
