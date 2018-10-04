@@ -7,6 +7,9 @@ export default class Invoker
 	invoke: (service, name, payload) ->
 
 		if dummy = @mocks[name] and @mocks[name][payload]
+			if typeof dummy is 'function'
+				return dummy payload
+
 			return dummy
 
 		result = await @lambda.invoke {
