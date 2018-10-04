@@ -3,7 +3,7 @@ import Container 	from '@heat/container'
 import compose 		from './compose'
 import EventEmitter from 'events'
 
-handle = (middlewares...) ->
+export default (middlewares...) ->
 
 	fn 		= compose middlewares
 	emitter = new EventEmitter
