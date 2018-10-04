@@ -10,10 +10,17 @@ export class EnvParser
 	get:(name, defaultValue) ->
 		value = @data[name]
 
-		if typeof value is 'undefined'
+		if typeof value isnt 'undefined'
+			return value
+
+		if typeof defaultValue isnt 'undefined'
 			return defaultValue
 
-		return value
+		throw new TypeError [
+			'Environment variable '
+			name
+			' hasn\'t been set.'
+		].join '"'
 
 	str: (name, defaultValue) ->
 		value = @get name, defaultValue
@@ -52,5 +59,21 @@ export class EnvParser
 		array = array.map (item) -> item.trim()
 
 		return array
+
+	enum: (name, possibilities, defaultValue) ->
+
+		value = @get name, defaultValue
+
+		if not possibilities.includes value
+			throw new TypeError [
+				'Environment variable '
+				name
+				' must contain one of the following values: '
+				possibilities.join ', '
+				'.'
+			].join ''
+
+		return value
+
 
 export default new EnvParser process.env

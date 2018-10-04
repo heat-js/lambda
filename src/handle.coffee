@@ -1,22 +1,30 @@
 
 import Container 	from '@heat/container'
 import compose 		from './compose'
+import EventEmitter from 'events'
 
 handle = (middlewares...) ->
 
-	fn = compose middlewares
+	fn 		= compose middlewares
+	emitter = new EventEmitter
 
-	return (input, context) ->
-		app = handle.container()
+	handle = (input, context) ->
+		app = Container.proxy()
 		app.context = context
 		app.input 	= input
 
+		emitter.emit 'before', app
+
 		await fn app
 
-		return app.output
+		emitter.emit 'after', app
 
-handle.container = ->
+		handle.app = app
 
-	return Container.proxy()
+		if app.has 'output'
+			return app.output
 
-export default handle
+	handle.on = emitter.on.bind emitter
+	handle.app = null
+
+	return handle
