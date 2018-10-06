@@ -47,7 +47,7 @@ export class Invoker
 
 		response = JSON.parse result.Payload
 
-		if typeof response is 'object' and response.errorMessage
+		if typeof response is 'object' and response isnt null and response.errorMessage
 			error = new Error response.errorMessage
 			error.name 		= response.errorType
 			error.response 	= response
