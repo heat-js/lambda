@@ -4,6 +4,7 @@ import Middleware from './abstract'
 export default class Event extends Middleware
 
 	constructor: (@name) ->
+		super()
 
 	handle: (app, next) ->
 
