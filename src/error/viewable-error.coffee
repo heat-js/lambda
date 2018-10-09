@@ -3,5 +3,11 @@ import ExtendableError from './extendable-error'
 
 export default class ViewableError extends ExtendableError
 
-	status: 400
-	code: 	'UNKNOWN_ERROR'
+	viewable: true
+
+	getData: -> {
+		error:
+			type:		@name
+			message: 	@message
+			viewable: 	@viewable
+	}

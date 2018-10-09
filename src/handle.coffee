@@ -8,23 +8,62 @@ export default (middlewares...) ->
 	fn 		= compose middlewares
 	emitter = new EventEmitter
 
-	handle = (input, context) ->
+	# ----------------------------------------------------
+
+	handle = (input, context, callback) ->
+
 		app = Container.proxy()
-		app.context = context
-		app.input 	= input
+		app.value 'context', 	context
+		app.value 'input', 		input
+		app.value 'callback', 	callback
+		app.value 'emitter', 	emitter
 
-		emitter.emit 'before', app
-
-		await fn app
-
-		emitter.emit 'after', app
+		# ----------------------------------------------------
+		# Save the last used app container.
 
 		handle.app = app
 
-		if app.has 'output'
-			return app.output
+		# ----------------------------------------------------
+		# Lifetime event BEFORE the middlewares have started.
 
-	handle.on = emitter.on.bind emitter
-	handle.app = null
+		emitter.emit 'before', app
+
+		# ----------------------------------------------------
+		# Run composed middleware functions.
+
+		try
+			await fn app
+
+		catch error
+
+			# Lambda supports errors with extra data.
+			if callback
+				callback error, if error.getData then error.getData()
+				return
+			else
+				throw error
+
+		# ----------------------------------------------------
+		# Lifetime event AFTER the middlewares have completed.
+
+		emitter.emit 'after', app
+
+		# ----------------------------------------------------
+		# Handle response.
+
+		output = if app.has 'output'
+			app.output
+
+		# Support for the old callback function.
+		if callback
+			callback null, output
+			return
+
+		return output
+
+	# ----------------------------------------------------
+
+	handle.on 	= emitter.on.bind emitter
+	handle.app 	= null
 
 	return handle
