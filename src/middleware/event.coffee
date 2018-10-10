@@ -8,6 +8,6 @@ export default class Event extends Middleware
 
 	handle: (app, next) ->
 
-		app.emitter.emit @name
+		app.emitter.emit @name, app
 
 		await next()

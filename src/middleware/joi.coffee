@@ -4,16 +4,22 @@ import joi 			from 'joi'
 
 export default class Joi extends Middleware
 
-	@rules = {}
-
 	constructor: (@fields) ->
 		super()
 
 	handle: (app, next) ->
-		app.input = await joi.validate app.input, @schema app.rules
+
+		data = await joi.validate(
+			app.input
+			@schema app.rules
+		)
+
+		app.value 'input', data
+
 		await next()
 
 	schema: (rules) ->
+
 		if not @schema_
 			if Array.isArray @fields
 				@schema_ = {}

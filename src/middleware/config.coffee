@@ -35,7 +35,8 @@ export default class Config extends Middleware
 		# build config
 		helper 		= new EnvParser data
 		@config 	= @configBuilder helper
-		app.config 	= @config
+
+		app.value 'config',	@config
 
 		await next()
 
