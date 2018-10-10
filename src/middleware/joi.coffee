@@ -9,31 +9,42 @@ export default class Joi extends Middleware
 
 	handle: (app, next) ->
 
-		data = await joi.validate(
-			app.input
-			@schema app.rules
-		)
+		@rules = app.rules
 
-		app.value 'input', data
+		if @fields
+
+			data = await joi.validate(
+				app.input
+				@schema @fields
+			)
+
+			app.value 'input', data
+
+		app.value 'validate', @validate.bind @
 
 		await next()
 
-	schema: (rules) ->
+	validate: (input, fields) ->
+		return joi.validate(
+			input
+			@schema fields
+		)
 
-		if not @schema_
-			if Array.isArray @fields
-				@schema_ = {}
+	schema: (fields) ->
 
-				for field in @fields
-					if rule = rules[field]
-						@schema_[field] = rule
-					else
-						throw new Error 'No validation rule found for field: ' + field
+		if Array.isArray fields
+			schema = {}
 
-			else if @fields instanceof Object
-				@schema_ = fields
+			for field in fields
+				if rule = @rules[field]
+					schema[field] = rule
+				else
+					throw new Error 'No validation rule found for field: ' + field
 
-			else
-				throw new TypeError 'Argument fields must be an object or array'
+		else if fields instanceof Object
+			schema = fields
 
-		return @schema_
+		else
+			throw new TypeError 'Argument fields must be an object or array'
+
+		return schema

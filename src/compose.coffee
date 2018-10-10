@@ -2,10 +2,12 @@
 import Middleware from './middleware/abstract'
 
 export default (middleware) ->
+
 	if not Array.isArray middleware
 		throw new TypeError 'Middleware stack must be an array!'
 
 	middleware = middleware.map (fn) ->
+
 		switch typeof fn
 			when 'function'
 
@@ -23,7 +25,6 @@ export default (middleware) ->
 				if typeof fn.handle is 'function'
 					return fn.handle.bind fn
 
-
 		throw new TypeError 'Middleware must be composed of functions or handle objects!'
 
 	return (params...) ->
@@ -39,7 +40,7 @@ export default (middleware) ->
 			if i is middleware.length
 				fn = params[params.length]
 
-			if !fn
+			if not fn
 				return Promise.resolve()
 
 			try
