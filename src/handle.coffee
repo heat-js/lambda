@@ -24,11 +24,6 @@ export default (middlewares...) ->
 		handle.app = app
 
 		# ----------------------------------------------------
-		# Lifetime event BEFORE the middlewares have started.
-
-		emitter.emit 'before', app
-
-		# ----------------------------------------------------
 		# Run composed middleware functions.
 
 		try
@@ -42,11 +37,6 @@ export default (middlewares...) ->
 				return
 			else
 				throw error
-
-		# ----------------------------------------------------
-		# Lifetime event AFTER the middlewares have completed.
-
-		emitter.emit 'after', app
 
 		# ----------------------------------------------------
 		# Handle response.

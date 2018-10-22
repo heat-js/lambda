@@ -6,20 +6,21 @@ export default class Knex extends Middleware
 
 	handle: (app, next) ->
 
-		options = if driver = app.config.knex.driver
-			app.config.knex[driver]
-		else
-			app.config.knex
-
-		db = knex options
-
-		app.value 'knex', db
+		db = null
+		app.knex = ->
+			db = knex app.config.knex
+			return db
 
 		try
 			await next()
 
 		catch error
-			db.destroy()
+			await @destroy db
 			throw error
 
-		db.destroy()
+		await @destroy db
+
+	destroy: (db) ->
+
+		if db
+			await db.destroy()
