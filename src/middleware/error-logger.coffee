@@ -9,12 +9,15 @@ export default class ErrorLogger extends Middleware
 	constructor: (@apiKey) ->
 		super()
 
+	getApiKey: (config) ->
+		return @apiKey or ( config.bugsnag and config.bugsnag.apiKey )
+
 	handle: (app, next) ->
-		if not app.config.bugsnag.apiKey and not @apiKey
+		if not @getApiKey app.config
 			throw new Error 'Bugsnag API Key not defined'
 
 		if not @registered
-			bugsnag.register @apiKey or app.config.bugsnag.apiKey, {
+			bugsnag.register @getApiKey app.config, {
 				projectRoot: process.cwd()
 				packageJSON: process.cwd() + '/package.json'
 			}
