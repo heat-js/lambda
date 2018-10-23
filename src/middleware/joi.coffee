@@ -1,50 +1,23 @@
 
 import Middleware 	from './abstract'
+import Validator 	from '../validator'
 import joi 			from 'joi'
 
 export default class Joi extends Middleware
 
 	constructor: (@fields) ->
-		super()
 
 	handle: (app, next) ->
 
-		@rules = app.rules
+		app.joi = ->
+			rules = if app.has 'rules' then app.rules else {}
+			return new Validator joi, rules
+
+		app.validate = ->
+			return app.joi.validate.bind app.joi
 
 		if @fields
-
-			data = await joi.validate(
-				app.input
-				@schema @fields
-			)
-
+			data = await app.joi.validate app.input, @fields
 			app.value 'input', data
 
-		app.value 'validate', @validate.bind @
-
 		await next()
-
-	validate: (input, fields) ->
-		return joi.validate(
-			input
-			@schema fields
-		)
-
-	schema: (fields) ->
-
-		if Array.isArray fields
-			schema = {}
-
-			for field in fields
-				if rule = @rules[field]
-					schema[field] = rule
-				else
-					throw new Error 'No validation rule found for field: ' + field
-
-		else if fields instanceof Object
-			schema = fields
-
-		else
-			throw new TypeError 'Argument fields must be an object or array'
-
-		return schema

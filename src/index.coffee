@@ -12,3 +12,7 @@ export {
 export {
 	default as Invoker
 } from './invoker'
+
+export {
+	default as Validator
+} from './validator'
