@@ -14,24 +14,31 @@ export default class ErrorLogger extends Middleware
 			throw new Error 'Bugsnag API Key not defined'
 
 		if not @registered
-			bugsnag.register @apiKey or app.config.bugsnag.apiKey
+			bugsnag.register @apiKey or app.config.bugsnag.apiKey, {
+				projectRoot: process.cwd()
+				packageJSON: process.cwd() + '/package.json'
+			}
 			@registered = true
 
 		try
 			await next()
 		catch error
-			await @notifyBugsnag error, app.context
+			if not error.viewable
+				await @notifyBugsnag error, app.context, app.input
 			throw error
 
 
-	notifyBugsnag: (error, context) ->
+	notifyBugsnag: (error, context, input) ->
 		return new Promise (resolve, reject) ->
 			bugsnag.notify error, {
-				appVersion: context.functionVersion
-				group: context.functionName
-				metaData: context
-				request:
-					id: context.awsRequestId
+				app:
+					name: context.functionName
+				input
+				metaData:
+					functionName: context.functionName
+					functionVersion: context.functionVersion
+					requestId: context.awsRequestId
+					memoryLimitInMB: context.memoryLimitInMB
 			}, (error) ->
 				if error
 					reject error
