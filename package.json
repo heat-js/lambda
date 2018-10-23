@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@heat/container": "^0.0.1",
+    "bugsnag": "^2.4.3",
     "extendable-error": "^0.1.5"
   },
   "devDependencies": {
