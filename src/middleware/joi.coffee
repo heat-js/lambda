@@ -6,6 +6,7 @@ import joi 			from 'joi'
 export default class Joi extends Middleware
 
 	constructor: (@fields) ->
+		super()
 
 	handle: (app, next) ->
 
