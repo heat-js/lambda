@@ -10,7 +10,7 @@ export default (middlewares...) ->
 
 	# ----------------------------------------------------
 
-	handle = (input, context, callback) ->
+	handle = (input, context = {}, callback) ->
 
 		app = Container.proxy()
 		app.value 'context', 	context

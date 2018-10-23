@@ -31,7 +31,7 @@ export default class ErrorLogger extends Middleware
 			throw error
 
 
-	notifyBugsnag: (error, context, input) ->
+	notifyBugsnag: (error, context = {}, input = {}) ->
 		return new Promise (resolve, reject) ->
 			bugsnag.notify error, {
 				app:
