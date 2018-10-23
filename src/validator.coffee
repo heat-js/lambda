@@ -4,7 +4,11 @@ export default class Validator
 	constructor: (@validator, @rules) ->
 
 	validate: (input, fields) ->
-		return @validator.validate input, @getValidationSchema(fields)
+		try
+			return await @validator.validate input, @getValidationSchema(fields)
+		catch error
+			error.viewable = true
+			throw error
 
 	getValidationSchema: (fields) ->
 		if Array.isArray fields
