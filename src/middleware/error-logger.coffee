@@ -14,7 +14,7 @@ export default class ErrorLogger extends Middleware
 
 	handle: (app, next) ->
 		if not @getApiKey app.config
-			throw new Error 'Bugsnag API Key not defined'
+			return await next()
 
 		if not @registered
 			bugsnag.register @getApiKey app.config, {
