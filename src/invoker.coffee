@@ -1,15 +1,9 @@
 
 export default class Invoker
 
-	constructor: (@lambda, @mocks = {}) ->
+	constructor: (@lambda) ->
 
 	invoke: (service, name, payload) ->
-
-		if dummy = @mocks[service] and @mocks[service][name]
-			if typeof dummy is 'function'
-				return dummy payload
-
-			return dummy
 
 		result = await @lambda.invoke {
 			FunctionName: "#{service}__#{name}"
