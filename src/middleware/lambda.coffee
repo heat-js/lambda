@@ -16,4 +16,7 @@ export default class Lambda extends Middleware
 
 			return new Invoker lambdaClient
 
+		app.invoke = ->
+			return app.invoker.invoke.bind app.invoker
+
 		await next()
