@@ -25,7 +25,9 @@ class Sqs
 	constructor: (@sqsClient, @sqsNameResolver) ->
 		@cache = new Map
 
-	send: (queue, payload) ->
+	send: (service, name, payload) ->
+		queue = "#{service}__#{name}"
+
 		return @sqsClient.sendMessage {
 			QueueUrl: 		@sqsNameResolver.url queue
 			MessageBody: 	JSON.stringify payload
@@ -33,7 +35,9 @@ class Sqs
 		}
 		.promise()
 
-	batch: (queue, payloads = []) ->
+	batch: (service, name, payloads = []) ->
+		queue = "#{service}__#{name}"
+
 		entries = []
 		index = 0
 		for payload in payloads
