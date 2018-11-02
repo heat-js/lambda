@@ -20,7 +20,7 @@ export default class SqsMiddleware extends Middleware
 		await next()
 
 
-class Sqs
+export class Sqs
 
 	constructor: (@sqsClient, @sqsNameResolver) ->
 		@cache = new Map
@@ -68,7 +68,7 @@ class Sqs
 		return chunkes
 
 
-class SqsNameResolver
+export class SqsNameResolver
 
 	constructor: (@sqsClient) ->
 		@urls 		= new Map

@@ -10,7 +10,7 @@ export default class ErrorLogger extends Middleware
 		super()
 
 	getApiKey: (config) ->
-		return @apiKey or ( config.bugsnag and config.bugsnag.apiKey )
+		return @apiKey or ( config and config.bugsnag and config.bugsnag.apiKey )
 
 	handle: (app, next) ->
 		if not @getApiKey app.config
@@ -25,9 +25,15 @@ export default class ErrorLogger extends Middleware
 
 		try
 			await next()
+
 		catch error
 			if not error.viewable
-				await @notifyBugsnag error, app.context, app.input
+				await @notifyBugsnag(
+					error
+					app.context
+					app.input
+				)
+
 			throw error
 
 
@@ -38,10 +44,10 @@ export default class ErrorLogger extends Middleware
 					name: context.functionName
 				input
 				metaData:
-					functionName: context.functionName
-					functionVersion: context.functionVersion
-					requestId: context.awsRequestId
-					memoryLimitInMB: context.memoryLimitInMB
+					requestId: 			context.awsRequestId
+					functionName: 		context.functionName
+					functionVersion:	context.functionVersion
+					memoryLimitInMB:	context.memoryLimitInMB
 			}, (error) ->
 				if error
 					reject error
