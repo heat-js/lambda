@@ -29,7 +29,7 @@ export class Sqs
 		queue = "#{service}__#{name}"
 
 		return @sqsClient.sendMessage {
-			QueueUrl: 		@sqsNameResolver.url queue
+			QueueUrl: 		await @sqsNameResolver.url queue
 			MessageBody: 	JSON.stringify payload
 			DelaySeconds: 	0
 		}
@@ -51,7 +51,7 @@ export class Sqs
 		chunks = @splitEntriesIntoChunks entries
 		for entries in chunks
 			promise = @sqsClient.sendMessageBatch {
-				QueueUrl: @sqsNameResolver.url queue
+				QueueUrl: await @sqsNameResolver.url queue
 				Entries: entries
 			}
 			.promise()
