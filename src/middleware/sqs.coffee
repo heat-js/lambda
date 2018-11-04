@@ -22,13 +22,13 @@ export default class SqsMiddleware extends Middleware
 
 export class Sqs
 
-	constructor: (@sqsClient, @sqsNameResolver) ->
+	constructor: (@client, @sqsNameResolver) ->
 		@cache = new Map
 
 	send: (service, name, payload, delay = 0) ->
 		url = await @sqsNameResolver.url "#{service}__#{name}"
 
-		return @sqsClient.sendMessage({
+		return @client.sendMessage({
 			QueueUrl: 		url
 			MessageBody: 	JSON.stringify payload
 			DelaySeconds: 	delay
@@ -42,12 +42,11 @@ export class Sqs
 				DelaySeconds: 	delay
 			}
 
-		promises	= []
-		chunks 		= @splitEntriesIntoChunks entries
-		url 		= await @sqsNameResolver.url "#{service}__#{name}"
+		chunks 	= @splitEntriesIntoChunks entries
+		url 	= await @sqsNameResolver.url "#{service}__#{name}"
 
-		await Promise.all chunks.map (entries) ->
-			return @sqsClient.sendMessageBatch({
+		return Promise.all chunks.map (entries) =>
+			return @client.sendMessageBatch({
 				QueueUrl: 	url
 				Entries: 	entries
 			}).promise()
@@ -62,7 +61,7 @@ export class Sqs
 
 export class SqsNameResolver
 
-	constructor: (@sqsClient) ->
+	constructor: (@client) ->
 		@urls 		= new Map
 		@promises 	= new Map
 
@@ -74,13 +73,10 @@ export class SqsNameResolver
 			{ QueueUrl } = await @promises.get name
 			return QueueUrl
 
-		request = @sqsClient.getQueueUrl {
-			QueueName: name
-		}
+		promise = @client.getQueueUrl { QueueName: name }
+			.promise()
 
-		promise = request.promise()
 		@promises.set name, promise
-
 		{ QueueUrl } = await promise
 
 		@urls.set name, QueueUrl
