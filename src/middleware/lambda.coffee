@@ -17,7 +17,7 @@ export default class Lambda extends Middleware
 
 	handle: (app, next) ->
 
-		app.invoker = ->
+		app.invoker = =>
 			lambda = new AWS.Lambda {
 				apiVersion: '2015-03-31'
 				region: 	@region()

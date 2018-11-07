@@ -16,7 +16,7 @@ export default class SqsMiddleware extends Middleware
 
 	handle: (app, next) ->
 
-		app.sqs = ->
+		app.sqs = =>
 			client = new AWS.SQS {
 				apiVersion: '2012-11-05'
 				region: 	@region()
