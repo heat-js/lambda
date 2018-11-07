@@ -6,13 +6,15 @@ import AWS			from 'aws-sdk'
 
 export default class Lambda extends Middleware
 
-	region: ->
+	region: (app) ->
 		return (
 			app.has('config') and
 			app.config.aws and
 			app.config.aws.region
 		) or (
 			process.env.AWS_REGION
+		) or (
+			'eu-west-1'
 		)
 
 	handle: (app, next) ->
