@@ -19,7 +19,7 @@ export default class SqsMiddleware extends Middleware
 		app.sqs = =>
 			client = new AWS.SQS {
 				apiVersion: '2012-11-05'
-				region: 	@region()
+				region: 	@region app
 			}
 
 			nameResolver = new SqsNameResolver client

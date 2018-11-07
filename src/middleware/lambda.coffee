@@ -20,7 +20,7 @@ export default class Lambda extends Middleware
 		app.invoker = =>
 			lambda = new AWS.Lambda {
 				apiVersion: '2015-03-31'
-				region: 	@region()
+				region: 	@region app
 			}
 
 			return new Invoker lambda
