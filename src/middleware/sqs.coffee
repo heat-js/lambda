@@ -5,12 +5,21 @@ import AWS			from 'aws-sdk'
 
 export default class SqsMiddleware extends Middleware
 
+	region: ->
+		return (
+			app.has('config') and
+			app.config.aws and
+			app.config.aws.region
+		) or (
+			process.env.AWS_REGION
+		)
+
 	handle: (app, next) ->
 
 		app.sqs = ->
 			client = new AWS.SQS {
 				apiVersion: '2012-11-05'
-				region: 	app.config.aws.region
+				region: 	@region()
 			}
 
 			nameResolver = new SqsNameResolver client
