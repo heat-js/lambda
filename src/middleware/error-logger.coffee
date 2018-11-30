@@ -9,15 +9,22 @@ export default class ErrorLogger extends Middleware
 	constructor: (@apiKey) ->
 		super()
 
-	getApiKey: (config) ->
-		return @apiKey or ( config.bugsnag and config.bugsnag.apiKey )
+	getApiKey: (app) ->
+		return (
+			@apiKey or
+			( app.has('config') and app.config.bugsnag and app.config.bugsnag.apiKey ) or
+			process.env.BUGSNAG_API_KEY
+		)
 
 	handle: (app, next) ->
-		if not @getApiKey app.config
+
+		apiKey = @getApiKey app
+
+		if not apiKey
 			return await next()
 
 		if not @registered
-			bugsnag.register @getApiKey app.config, {
+			bugsnag.register apiKey, {
 				projectRoot: process.cwd()
 				packageJSON: process.cwd() + '/package.json'
 			}
@@ -25,9 +32,15 @@ export default class ErrorLogger extends Middleware
 
 		try
 			await next()
+
 		catch error
 			if not error.viewable
-				await @notifyBugsnag error, app.context, app.input
+				await @notifyBugsnag(
+					error
+					app.context
+					app.input
+				)
+
 			throw error
 
 
@@ -38,10 +51,10 @@ export default class ErrorLogger extends Middleware
 					name: context.functionName
 				input
 				metaData:
-					functionName: context.functionName
-					functionVersion: context.functionVersion
-					requestId: context.awsRequestId
-					memoryLimitInMB: context.memoryLimitInMB
+					requestId: 			context.awsRequestId
+					functionName: 		context.functionName
+					functionVersion:	context.functionVersion
+					memoryLimitInMB:	context.memoryLimitInMB
 			}, (error) ->
 				if error
 					reject error

@@ -14,6 +14,13 @@ export default class Invoker
 		response = JSON.parse result.Payload
 
 		if typeof response is 'object' and response isnt null and response.errorMessage
+
+			console.error(
+				'service:', service
+				'name:', 	name
+				'error:', 	response.errorMessage
+			)
+
 			error = new Error response.errorMessage
 			error.name 		= response.errorType
 			error.response 	= response

@@ -5,12 +5,23 @@ import AWS			from 'aws-sdk'
 
 export default class SqsMiddleware extends Middleware
 
+	region: (app) ->
+		return (
+			app.has('config') and
+			app.config.aws and
+			app.config.aws.region
+		) or (
+			process.env.AWS_REGION
+		) or (
+			'eu-west-1'
+		)
+
 	handle: (app, next) ->
 
-		app.sqs = ->
+		app.sqs = =>
 			client = new AWS.SQS {
 				apiVersion: '2012-11-05'
-				region: app.config.aws.region
+				region: 	@region app
 			}
 
 			nameResolver = new SqsNameResolver client
@@ -20,45 +31,36 @@ export default class SqsMiddleware extends Middleware
 		await next()
 
 
-class Sqs
+export class Sqs
 
-	constructor: (@sqsClient, @sqsNameResolver) ->
+	constructor: (@client, @sqsNameResolver) ->
 		@cache = new Map
 
-	send: (service, name, payload) ->
-		queue = "#{service}__#{name}"
+	send: (service, name, payload, delay = 0) ->
+		url = await @sqsNameResolver.url "#{service}__#{name}"
 
-		return @sqsClient.sendMessage {
-			QueueUrl: 		@sqsNameResolver.url queue
+		return @client.sendMessage({
+			QueueUrl: 		url
 			MessageBody: 	JSON.stringify payload
-			DelaySeconds: 	0
-		}
-		.promise()
+			DelaySeconds: 	delay
+		}).promise()
 
-	batch: (service, name, payloads = []) ->
-		queue = "#{service}__#{name}"
-
-		entries = []
-		index = 0
-		for payload in payloads
-			entries.push {
-				Id: 			String index++
+	batch: (service, name, payloads = [], delay = 0) ->
+		entries = payloads.map (payload, index) ->
+			return {
+				Id: 			String index
 				MessageBody: 	JSON.stringify payload
-				DelaySeconds: 	0
+				DelaySeconds: 	delay
 			}
 
-		promises = []
-		chunks = @splitEntriesIntoChunks entries
-		for entries in chunks
-			promise = @sqsClient.sendMessageBatch {
-				QueueUrl: @sqsNameResolver.url queue
-				Entries: entries
-			}
-			.promise()
+		chunks 	= @splitEntriesIntoChunks entries
+		url 	= await @sqsNameResolver.url "#{service}__#{name}"
 
-			promises.push promise
-
-		await Promise.all promises
+		return Promise.all chunks.map (entries) =>
+			return @client.sendMessageBatch({
+				QueueUrl: 	url
+				Entries: 	entries
+			}).promise()
 
 	splitEntriesIntoChunks: (entries, size = 10) ->
 		chunkes = []
@@ -68,9 +70,9 @@ class Sqs
 		return chunkes
 
 
-class SqsNameResolver
+export class SqsNameResolver
 
-	constructor: (@sqsClient) ->
+	constructor: (@client) ->
 		@urls 		= new Map
 		@promises 	= new Map
 
@@ -82,19 +84,11 @@ class SqsNameResolver
 			{ QueueUrl } = await @promises.get name
 			return QueueUrl
 
-		request = @sqsClient.getQueueUrl {
-			QueueName: name
-		}
-
-		promise = request.promise()
+		promise = @client.getQueueUrl { QueueName: name }
+			.promise()
 
 		@promises.set name, promise
-
 		{ QueueUrl } = await promise
 
 		@urls.set name, QueueUrl
-
 		return QueueUrl
-
-	# queueUrl: (name) ->
-	# 	return "https://sqs.#{@region}.amazonaws.com/#{@accountId}/#{name}"
