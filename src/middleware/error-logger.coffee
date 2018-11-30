@@ -1,6 +1,6 @@
 
 import Middleware 	from './abstract'
-import bugsnag 		from 'bugsnag'
+import bugsnag 		from '@bugsnag/js'
 
 export default class ErrorLogger extends Middleware
 

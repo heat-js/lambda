@@ -21,8 +21,8 @@
     "cleanup": "rm -f ./{/**,}/*.js; rm -rf error; rm -rf middleware;"
   },
   "dependencies": {
+    "@bugsnag/js": "^5.0.1",
     "@heat/container": "^0.0.1",
-    "bugsnag": "^2.4.3",
     "extendable-error": "^0.1.5"
   },
   "devDependencies": {
