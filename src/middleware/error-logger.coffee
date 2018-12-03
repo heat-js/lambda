@@ -23,12 +23,12 @@ export default class ErrorLogger extends Middleware
 		if not apiKey
 			return await next()
 
-		if not @registered
-			bugsnag.register apiKey, {
+		if not @bugsnagClient
+			@bugsnagClient = bugsnag {
+				apiKey
 				projectRoot: process.cwd()
 				packageJSON: process.cwd() + '/package.json'
 			}
-			@registered = true
 
 		try
 			await next()
@@ -45,8 +45,8 @@ export default class ErrorLogger extends Middleware
 
 
 	notifyBugsnag: (error, context = {}, input = {}) ->
-		return new Promise (resolve, reject) ->
-			bugsnag.notify error, {
+		return new Promise (resolve, reject) =>
+			@bugsnagClient.notify error, {
 				app:
 					name: context.functionName
 				input
