@@ -28,6 +28,7 @@ export default class ErrorLogger extends Middleware
 				apiKey
 				projectRoot: process.cwd()
 				packageJSON: process.cwd() + '/package.json'
+				logger: null
 			}
 
 		try
