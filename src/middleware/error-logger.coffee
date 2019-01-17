@@ -1,6 +1,7 @@
 
-import Middleware 	from './abstract'
-import bugsnag 		from '@bugsnag/js'
+import Middleware 	 from './abstract'
+import bugsnag 		 from '@bugsnag/js'
+import ViewableError from '../error/viewable-error'
 
 export default class ErrorLogger extends Middleware
 
@@ -35,7 +36,7 @@ export default class ErrorLogger extends Middleware
 			await next()
 
 		catch error
-			if not error.viewable
+			if error instanceof ViewableError
 				await @notifyBugsnag(
 					error
 					app.context
