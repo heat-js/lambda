@@ -1,7 +1,7 @@
 {
   "name": "@heat/lambda",
   "main": "index",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "license": "MIT",
   "private": false,
   "repository": {
@@ -13,9 +13,9 @@
   },
   "scripts": {
     "test": "./node_modules/.bin/jest --runInBand",
-    "patch": "if yarn test; then yarn publish --patch; fi",
-    "minor": "if yarn test; then yarn publish --minor; fi",
-    "major": "if yarn test; then yarn publish --major; fi",
+    "patch": "yarn publish --patch",
+    "minor": "yarn publish --minor",
+    "major": "yarn publish --major",
     "prepublish": "bash ./build.sh",
     "postpublish": "yarn cleanup",
     "cleanup": "rm -f ./{/**,}/*.js; rm -rf error; rm -rf middleware;"
