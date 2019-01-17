@@ -36,7 +36,7 @@ export default class ErrorLogger extends Middleware
 			await next()
 
 		catch error
-			if error instanceof ViewableError
+			if not error instanceof ViewableError
 				await @notifyBugsnag(
 					error
 					app.context
