@@ -1,4 +1,6 @@
 
+import ValidationError from './error/validation-error'
+
 export default class Validator
 
 	constructor: (@validator, @rules) ->
@@ -7,8 +9,7 @@ export default class Validator
 		try
 			return await @validator.validate input, @getValidationSchema(fields)
 		catch error
-			error.viewable = true
-			throw error
+			throw new ValidationError error.message
 
 	getValidationSchema: (fields) ->
 		if Array.isArray fields
