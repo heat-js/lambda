@@ -6,8 +6,8 @@ export default class Invoker
 	invoke: (service, name, payload) ->
 
 		result = await @lambda.invoke {
-			FunctionName: "#{service}__#{name}"
-			Payload: JSON.stringify payload
+			FunctionName: 	"#{service}__#{name}"
+			Payload: 		JSON.stringify payload
 		}
 		.promise()
 

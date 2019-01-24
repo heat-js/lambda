@@ -5,15 +5,17 @@ import ViewableError from '../error/viewable-error'
 
 export default class ErrorLogger extends Middleware
 
-	registered: false
-
 	constructor: (@apiKey) ->
 		super()
 
 	getApiKey: (app) ->
 		return (
 			@apiKey or
-			( app.has('config') and app.config.bugsnag and app.config.bugsnag.apiKey ) or
+			(
+				app.has('config') and
+				app.config.bugsnag and
+				app.config.bugsnag.apiKey
+			) or
 			process.env.BUGSNAG_API_KEY
 		)
 
@@ -32,8 +34,9 @@ export default class ErrorLogger extends Middleware
 				logger: null
 			}
 
+		app.value 'bugsnag', @bugsnag
 		app.value 'notify', (error, metaData = {}) =>
-			return @notifyBugsnag(
+			return @notify(
 				error
 				app.context
 				app.input
@@ -44,8 +47,8 @@ export default class ErrorLogger extends Middleware
 			await next()
 
 		catch error
-			if not error instanceof ViewableError
-				await @notifyBugsnag(
+			if not ( error instanceof ViewableError )
+				await @notify(
 					error
 					app.context
 					app.input
@@ -53,7 +56,7 @@ export default class ErrorLogger extends Middleware
 
 			throw error
 
-	notifyBugsnag: (error, context = {}, input = {}, metaData = {}) ->
+	notify: (error, context = {}, input = {}, metaData = {}) ->
 		return new Promise (resolve, reject) =>
 			@bugsnag.notify error, {
 				app:
