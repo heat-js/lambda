@@ -7,6 +7,9 @@ export default class SqsWorker
 
 		input = app.input
 
+		# ----------------------------------------------------
+		# Single queue processed
+
 		if not (typeof input is 'object' and input isnt null)
 			await @workerCallback app, input
 			await next()
@@ -18,6 +21,9 @@ export default class SqsWorker
 			await @workerCallback app, input
 			await next()
 			return
+
+		# ----------------------------------------------------
+		# Batch of qeueue processed
 
 		promises = []
 
