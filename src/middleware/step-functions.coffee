@@ -33,12 +33,13 @@ export default class StepFunctionsMiddleware extends Middleware
 
 			client = new AWS.StepFunctions {
 				apiVersion: '2016-11-23'
+				region
 			}
 
 			return new StepFunctions(
 				client
 				region
-				accoundId
+				accountId
 			)
 
 		await next()
