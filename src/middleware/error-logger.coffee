@@ -59,14 +59,15 @@ export default class ErrorLogger extends Middleware
 	notify: (error, context = {}, input = {}, metaData = {}) ->
 		return new Promise (resolve, reject) =>
 			@bugsnag.notify error, {
-				app:
-					name: context.functionName
-				input
+				# appVersion:
 				metaData: Object.assign {}, metaData, {
-					requestId: 			context.awsRequestId
-					functionName: 		context.functionName
-					functionVersion:	context.functionVersion
-					memoryLimitInMB:	context.memoryLimitInMB
+					input
+					lambda:{
+						requestId: 			context.awsRequestId
+						functionName: 		context.functionName
+						functionVersion:	context.functionVersion
+						memoryLimitInMB:	context.memoryLimitInMB
+					}
 				}
 
 			}, (error) ->
