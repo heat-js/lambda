@@ -59,9 +59,18 @@ export class StepFunctions
 			"#{service}__#{name}"
 		].join ':'
 
-		return @client.startExecution {
-			stateMachineArn: 	arn
-			input: 				JSON.stringify payload
-			name: 				idempotentKey
-		}
-		.promise()
+		try
+			response = await @client.startExecution {
+				stateMachineArn: 	arn
+				input: 				JSON.stringify payload
+				name: 				idempotentKey
+			}
+			.promise()
+
+		catch error
+			if error.name is 'ExecutionAlreadyExists'
+				return
+
+			throw error
+
+		return
