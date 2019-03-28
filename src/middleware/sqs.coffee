@@ -18,15 +18,17 @@ export default class SqsMiddleware extends Middleware
 
 	handle: (app, next) ->
 
-		app.sqs = =>
-			client = new AWS.SQS {
+		app.sqsClient = =>
+			return new AWS.SQS {
 				apiVersion: '2012-11-05'
 				region: 	@region app
 			}
 
-			nameResolver = new SqsNameResolver client
+		app.sqsNameResolver = ->
+			return new SqsNameResolver app.sqsClient
 
-			return new Sqs client, nameResolver
+		app.sqs = ->
+			return new Sqs app.sqsClient, app.sqsNameResolver
 
 		await next()
 
@@ -53,8 +55,8 @@ export class Sqs
 				DelaySeconds: 	delay
 			}
 
-		chunks 	= @splitEntriesIntoChunks entries
 		url 	= await @sqsNameResolver.url "#{service}__#{name}"
+		chunks 	= @chunk entries
 
 		return Promise.all chunks.map (entries) =>
 			return @client.sendMessageBatch({
@@ -62,12 +64,12 @@ export class Sqs
 				Entries: 	entries
 			}).promise()
 
-	splitEntriesIntoChunks: (entries, size = 10) ->
-		chunkes = []
+	chunk: (entries, size = 10) ->
+		chunks = []
 		while entries.length > 0
-			chunkes.push entries.splice 0, size
+			chunks.push entries.splice 0, size
 
-		return chunkes
+		return chunks
 
 
 export class SqsNameResolver
@@ -91,4 +93,5 @@ export class SqsNameResolver
 		{ QueueUrl } = await promise
 
 		@urls.set name, QueueUrl
+
 		return QueueUrl
