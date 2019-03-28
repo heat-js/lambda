@@ -38,7 +38,7 @@ export class Sqs
 		@cache = new Map
 
 	send: (service, name, payload, delay = 0) ->
-		url = await @sqsUrlResolver.url "#{service}__#{name}"
+		url = await @sqsUrlResolver.fromName "#{service}__#{name}"
 
 		return @client.sendMessage({
 			QueueUrl: 		url
