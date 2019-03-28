@@ -1,5 +1,4 @@
 
-
 import Middleware 	from './abstract'
 import AWS			from 'aws-sdk'
 
