@@ -23,22 +23,22 @@ export default class SqsMiddleware extends Middleware
 				region: 	@region app
 			}
 
-		app.sqsNameResolver = ->
-			return new SqsNameResolver app.sqsClient
+		app.sqsUrlResolver = ->
+			return new SqsUrlResolver app.sqsClient
 
 		app.sqs = ->
-			return new Sqs app.sqsClient, app.sqsNameResolver
+			return new Sqs app.sqsClient, app.sqsUrlResolver
 
 		await next()
 
 
 export class Sqs
 
-	constructor: (@client, @sqsNameResolver) ->
+	constructor: (@client, @sqsUrlResolver) ->
 		@cache = new Map
 
 	send: (service, name, payload, delay = 0) ->
-		url = await @sqsNameResolver.url "#{service}__#{name}"
+		url = await @sqsUrlResolver.url "#{service}__#{name}"
 
 		return @client.sendMessage({
 			QueueUrl: 		url
@@ -54,7 +54,7 @@ export class Sqs
 				DelaySeconds: 	delay
 			}
 
-		url 	= await @sqsNameResolver.url "#{service}__#{name}"
+		url 	= await @sqsUrlResolver.fromName "#{service}__#{name}"
 		chunks 	= @chunk entries
 
 		return Promise.all chunks.map (entries) =>
@@ -71,13 +71,13 @@ export class Sqs
 		return chunks
 
 
-export class SqsNameResolver
+export class SqsUrlResolver
 
 	constructor: (@client) ->
 		@urls 		= new Map
 		@promises 	= new Map
 
-	url: (name) ->
+	fromName: (name) ->
 		if @urls.has name
 			return @urls.get name
 
