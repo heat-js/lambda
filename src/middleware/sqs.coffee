@@ -38,10 +38,11 @@ export class Sqs
 		@cache = new Map
 
 	send: (service, name, payload, delay = 0) ->
-		url = await @sqsUrlResolver.fromName "#{service}__#{name}"
+		queueName = if name then "#{service}__#{name}" else service
+		queueUrl  = await @sqsUrlResolver.fromName queueName
 
 		return @client.sendMessage({
-			QueueUrl: 		url
+			QueueUrl: 		queueUrl
 			MessageBody: 	JSON.stringify payload
 			DelaySeconds: 	delay
 		}).promise()
@@ -54,12 +55,14 @@ export class Sqs
 				DelaySeconds: 	delay
 			}
 
-		url 	= await @sqsUrlResolver.fromName "#{service}__#{name}"
-		chunks 	= @chunk entries
+		queueName = if name then "#{service}__#{name}" else service
+		queueUrl  = await @sqsUrlResolver.fromName queueName
+
+		chunks = @chunk entries
 
 		return Promise.all chunks.map (entries) =>
 			return @client.sendMessageBatch({
-				QueueUrl: 	url
+				QueueUrl: 	queueUrl
 				Entries: 	entries
 			}).promise()
 
