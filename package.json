@@ -1,7 +1,7 @@
 {
   "name": "@heat/lambda",
   "main": "index",
-  "version": "0.3.4",
+  "version": "0.3.8",
   "license": "MIT",
   "private": false,
   "repository": {
@@ -12,13 +12,11 @@
     "url": "https://github.com/heat-js/lambda/issues"
   },
   "scripts": {
-    "test": "./node_modules/.bin/jest --runInBand",
-    "patch": "yarn publish --patch",
-    "minor": "yarn publish --minor",
-    "major": "yarn publish --major",
-    "prepublish": "bash ./build.sh",
-    "postpublish": "yarn cleanup",
-    "cleanup": "rm -f ./{/**,}/*.js; rm -rf error; rm -rf middleware;"
+    "test": "./node_modules/.bin/jest",
+    "patch": "yarn version --patch; ./node_modules/.bin/ncp",
+    "minor": "yarn version --minor; ./node_modules/.bin/ncp",
+    "major": "yarn version --major; ./node_modules/.bin/ncp",
+    "deploy": "yarn version; ./node_modules/.bin/ncp"
   },
   "dependencies": {
     "@bugsnag/js": "^5.0.1",
@@ -26,13 +24,6 @@
     "extendable-error": "^0.1.5"
   },
   "devDependencies": {
-    "babel-core": "^6.26.3",
-    "babel-plugin-transform-es2015-modules-commonjs-optimized": "^6.16.0",
-    "coffeescript": "^2.3.1"
-  },
-  "babel": {
-    "plugins": [
-      "transform-es2015-modules-commonjs-optimized"
-    ]
+    "@heat/npm-coffee-publisher": "^0.1.6"
   }
 }

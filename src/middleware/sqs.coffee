@@ -1,5 +1,4 @@
 
-
 import Middleware 	from './abstract'
 import AWS			from 'aws-sdk'
 
@@ -18,29 +17,32 @@ export default class SqsMiddleware extends Middleware
 
 	handle: (app, next) ->
 
-		app.sqs = =>
-			client = new AWS.SQS {
+		app.sqsClient = =>
+			return new AWS.SQS {
 				apiVersion: '2012-11-05'
 				region: 	@region app
 			}
 
-			nameResolver = new SqsNameResolver client
+		app.sqsUrlResolver = ->
+			return new SqsUrlResolver app.sqsClient
 
-			return new Sqs client, nameResolver
+		app.sqs = ->
+			return new Sqs app.sqsClient, app.sqsUrlResolver
 
 		await next()
 
 
 export class Sqs
 
-	constructor: (@client, @sqsNameResolver) ->
+	constructor: (@client, @sqsUrlResolver) ->
 		@cache = new Map
 
 	send: (service, name, payload, delay = 0) ->
-		url = await @sqsNameResolver.url "#{service}__#{name}"
+		queueName = if name then "#{service}__#{name}" else service
+		queueUrl  = await @sqsUrlResolver.fromName queueName
 
 		return @client.sendMessage({
-			QueueUrl: 		url
+			QueueUrl: 		queueUrl
 			MessageBody: 	JSON.stringify payload
 			DelaySeconds: 	delay
 		}).promise()
@@ -53,30 +55,32 @@ export class Sqs
 				DelaySeconds: 	delay
 			}
 
-		chunks 	= @splitEntriesIntoChunks entries
-		url 	= await @sqsNameResolver.url "#{service}__#{name}"
+		queueName = if name then "#{service}__#{name}" else service
+		queueUrl  = await @sqsUrlResolver.fromName queueName
+
+		chunks = @chunk entries
 
 		return Promise.all chunks.map (entries) =>
 			return @client.sendMessageBatch({
-				QueueUrl: 	url
+				QueueUrl: 	queueUrl
 				Entries: 	entries
 			}).promise()
 
-	splitEntriesIntoChunks: (entries, size = 10) ->
-		chunkes = []
+	chunk: (entries, size = 10) ->
+		chunks = []
 		while entries.length > 0
-			chunkes.push entries.splice 0, size
+			chunks.push entries.splice 0, size
 
-		return chunkes
+		return chunks
 
 
-export class SqsNameResolver
+export class SqsUrlResolver
 
 	constructor: (@client) ->
 		@urls 		= new Map
 		@promises 	= new Map
 
-	url: (name) ->
+	fromName: (name) ->
 		if @urls.has name
 			return @urls.get name
 
@@ -91,4 +95,5 @@ export class SqsNameResolver
 		{ QueueUrl } = await promise
 
 		@urls.set name, QueueUrl
+
 		return QueueUrl
