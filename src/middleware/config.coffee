@@ -33,8 +33,12 @@ export default class Config extends Middleware
 		data = Object.assign {}, process.env, await @promise
 
 		# build config
-		helper 		= new EnvParser data
-		@config 	= @configBuilder helper
+		helper = new EnvParser data
+
+		if @configBuilder
+			@config = @configBuilder helper
+		else
+			@config = {}
 
 		app.value 'config',	@config
 
