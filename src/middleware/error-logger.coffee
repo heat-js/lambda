@@ -29,6 +29,9 @@ export default class ErrorLogger extends Middleware
 		if typeof apiKey isnt 'string'
 			throw new Error 'Bugsnag API key should be a string'
 
+		if -1 < apiKey.indexOf 'ssm:/'
+			throw new Error 'SSM Bugsnag API key is invalid'
+
 		if not @bugsnag
 			@bugsnag = bugsnag {
 				apiKey
