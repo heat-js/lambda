@@ -24,7 +24,10 @@ export default class ErrorLogger extends Middleware
 		apiKey = @getApiKey app
 
 		if not apiKey
-			return await next()
+			throw new Error 'Bugsnag API key not found'
+
+		if typeof apiKey isnt 'string'
+			throw new Error 'Bugsnag API key should be a string'
 
 		if not @bugsnag
 			@bugsnag = bugsnag {
@@ -48,30 +51,26 @@ export default class ErrorLogger extends Middleware
 
 		catch error
 			if not ( error instanceof ViewableError )
-				await @notify(
-					error
-					app.context
-					app.input
-				)
+				await app.notify error
 
 			throw error
 
 	notify: (error, context = {}, input = {}, metaData = {}) ->
-		return new Promise (resolve, reject) =>
-			@bugsnag.notify error, {
-				# appVersion:
-				metaData: Object.assign {}, metaData, {
-					input
-					lambda:{
-						requestId: 			context.awsRequestId
-						functionName: 		context.functionName
-						functionVersion:	context.functionVersion
-						memoryLimitInMB:	context.memoryLimitInMB
-					}
-				}
 
-			}, (error) ->
-				if error
-					reject error
+		params = {
+			metaData: Object.assign {}, metaData, {
+				input
+				lambda:
+					requestId: 			context.awsRequestId
+					functionName: 		context.functionName
+					functionVersion:	context.functionVersion
+					memoryLimitInMB:	context.memoryLimitInMB
+			}
+		}
+
+		return new Promise (resolve, reject) =>
+			@bugsnag.notify error, params, (err) ->
+				if err
+					reject err
 				else
 					resolve()
