@@ -82,9 +82,10 @@ export class StepFunctions
 		}
 		.promise()
 
-	failTask: (taskToken, output) ->
-		await @client.SendTaskFailure {
+	failTask: (taskToken, error, cause) ->
+		await @client.sendTaskFailure {
 			taskToken
-			output
+			error
+			cause
 		}
 		.promise()
