@@ -74,3 +74,17 @@ export class StepFunctions
 			throw error
 
 		return
+
+	completeTask: (taskToken, output) ->
+		await @client.sendTaskSuccess {
+			taskToken
+			output
+		}
+		.promise()
+
+	failTask: (taskToken, output) ->
+		await @client.SendTaskFailure {
+			taskToken
+			output
+		}
+		.promise()
