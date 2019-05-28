@@ -75,14 +75,14 @@ export class StepFunctions
 
 		return
 
-	completeTask: (taskToken, output) ->
+	sendTaskSuccess: (taskToken, output) ->
 		await @client.sendTaskSuccess {
 			taskToken
 			output
 		}
 		.promise()
 
-	failTask: (taskToken, error, cause) ->
+	sendTaskFailure: (taskToken, error, cause) ->
 		await @client.sendTaskFailure {
 			taskToken
 			error
