@@ -30,11 +30,15 @@ export default class Config extends Middleware
 		@promise = @resolveSsmValues process.env
 
 		# merge resolved ssm values with old env values
-		data = Object.assign {}, process.env, await @promise
+		Object.assign process.env, await @promise
 
 		# build config
-		helper 		= new EnvParser data
-		@config 	= @configBuilder helper
+		helper = new EnvParser process.env
+
+		if @configBuilder
+			@config = @configBuilder helper
+		else
+			@config = {}
 
 		app.value 'config',	@config
 
