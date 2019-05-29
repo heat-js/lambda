@@ -74,3 +74,20 @@ export class StepFunctions
 			throw error
 
 		return
+
+	sendTaskSuccess: (taskToken, output = {}) ->
+		output = JSON.stringify output
+
+		await @client.sendTaskSuccess {
+			taskToken
+			output
+		}
+		.promise()
+
+	sendTaskFailure: (taskToken, errorCode, cause) ->
+		await @client.sendTaskFailure {
+			taskToken
+			error: errorCode
+			cause
+		}
+		.promise()
