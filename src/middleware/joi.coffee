@@ -1,7 +1,7 @@
 
 import Middleware 	from './abstract'
 import Validator 	from '../validator'
-import joi 			from 'joi'
+import joi 			from '@hapi/joi'
 
 export default class Joi extends Middleware
 
