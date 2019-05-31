@@ -11,7 +11,9 @@ export default class Warmer extends Middleware
 			typeof input is 'object' and
 			input.warmer
 		)
-			console.log 'Warming...'
+			message = 'Warming...'
+			console.log message
+			app.output = message
 			return
 
 		await next()

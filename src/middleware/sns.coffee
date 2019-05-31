@@ -15,9 +15,18 @@ export default class SnsMiddleware extends Middleware
 			'eu-west-1'
 		)
 
+	accountId: (app) ->
+		return (
+			app.has('config') and
+			app.config.aws and
+			app.config.aws.accountId
+		) or (
+			process.env.AWS_ACCOUNT_ID
+		)
+
 	handle: (app, next) ->
 
-		app.sns = ->
+		app.sns = =>
 			region 		= @region app
 			accountId 	= @accountId app
 
@@ -40,8 +49,7 @@ export class Sns
 
 	constructor: (@client) ->
 
-	send: (service, name, subject, payload, attributes) ->
-
+	publish: (service, name, subject, payload, attributes) ->
 		arn = [
 			'arn:aws:states'
 			@region

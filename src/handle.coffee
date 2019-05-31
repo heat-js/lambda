@@ -1,6 +1,6 @@
 
 import Container 	from '@heat/container'
-import Warmer 		from './middleware/warner'
+import Warmer 		from './middleware/warmer'
 import compose 		from './compose'
 import EventEmitter from 'events'
 

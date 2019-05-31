@@ -21,6 +21,5 @@ export default class Knex extends Middleware
 		await @destroy db
 
 	destroy: (db) ->
-
 		if db
 			await db.destroy()

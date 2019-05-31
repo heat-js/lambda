@@ -1,7 +1,6 @@
 
 
 import Middleware 	from './abstract'
-import Invoker 		from '../invoker'
 import AWS			from 'aws-sdk'
 
 export default class Lambda extends Middleware
@@ -19,15 +18,40 @@ export default class Lambda extends Middleware
 
 	handle: (app, next) ->
 
-		app.invoker = =>
+		app.lambda = =>
 			lambda = new AWS.Lambda {
 				apiVersion: '2015-03-31'
 				region: 	@region app
 			}
 
-			return new Invoker lambda
+			return new LambdaInvoker lambda
 
 		app.invoke = ->
-			return app.invoker.invoke.bind app.invoker
+			return app.lambda.invoke.bind app.lambda
 
 		await next()
+
+
+export class LambdaInvoker
+
+	constructor: (@client) ->
+
+	invoke: (service, name, payload) ->
+		result = await @client.invoke {
+			FunctionName: 	"#{service}__#{name}"
+			Payload: 		JSON.stringify payload
+		}
+		.promise()
+
+		response = JSON.parse result.Payload
+
+		if typeof response is 'object' and response isnt null and response.errorMessage
+			error = new Error response.errorMessage
+			error.name 		= response.errorType
+			error.response 	= response
+			error.metadata 	= {
+				service: "#{service}__#{name}"
+			}
+			throw error
+
+		return response

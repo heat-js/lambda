@@ -3,7 +3,7 @@ import Middleware 	 from './abstract'
 import bugsnag 		 from '@bugsnag/js'
 import ViewableError from '../error/viewable-error'
 
-export default class ErrorLogger extends Middleware
+export default class Bugsnag extends Middleware
 
 	constructor: (@apiKey) ->
 		super()
@@ -41,8 +41,9 @@ export default class ErrorLogger extends Middleware
 			}
 
 		app.value 'bugsnag', @bugsnag
-		app.value 'notify', (error, metaData = {}) =>
-			return @notify(
+
+		app.value 'log', (error, metaData = {}) =>
+			return @log(
 				error
 				app.context
 				app.input
@@ -54,21 +55,26 @@ export default class ErrorLogger extends Middleware
 
 		catch error
 			if not ( error instanceof ViewableError )
-				await app.notify error
+				await app.log error
 
 			throw error
 
-	notify: (error, context = {}, input = {}, metaData = {}) ->
-
+	log: (error, context = {}, input = {}, metaData = {}) ->
 		params = {
-			metaData: Object.assign {}, metaData, {
-				input
-				lambda:
-					requestId: 			context.awsRequestId
-					functionName: 		context.functionName
-					functionVersion:	context.functionVersion
-					memoryLimitInMB:	context.memoryLimitInMB
-			}
+			metaData: Object.assign(
+				{}
+				metaData
+				{
+					input
+					lambda:
+						requestId: 			context.awsRequestId
+						functionName: 		context.functionName
+						functionVersion:	context.functionVersion
+						memoryLimitInMB:	context.memoryLimitInMB
+				}
+				errorData:
+					error.metadata
+			)
 		}
 
 		return new Promise (resolve, reject) =>

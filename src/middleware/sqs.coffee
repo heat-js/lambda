@@ -27,7 +27,10 @@ export default class SqsMiddleware extends Middleware
 			return new SqsUrlResolver app.sqsClient
 
 		app.sqs = ->
-			return new Sqs app.sqsClient, app.sqsUrlResolver
+			return new Sqs(
+				app.sqsClient
+				app.sqsUrlResolver
+			)
 
 		await next()
 

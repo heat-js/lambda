@@ -50,7 +50,6 @@ export class StepFunctions
 	constructor: (@client, @region, @accountId) ->
 
 	start: (service, name, payload, idempotentKey = null) ->
-
 		arn = [
 			'arn:aws:states'
 			@region

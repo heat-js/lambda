@@ -2,7 +2,6 @@
 export class EnvParser
 
 	constructor: (@data) ->
-
 		@string 	= @str
 		@integer 	= @int
 		@boolean 	= @bool
