@@ -75,7 +75,7 @@ export class Sns
 		else
 			throw new TypeError 'Invalid SNS message type'
 
-		if Object.keys(attributes).length
+		if attributes and Object.keys(attributes).length
 			messageAttributes = {}
 
 			for key, value of attributes
