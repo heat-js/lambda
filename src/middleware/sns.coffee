@@ -63,14 +63,17 @@ export class Sns
 			Subject:	subject
 		}
 
-		switch typeof payload
-			when 'object'
-				params.Message = JSON.stringify payload
-				params.MessageStructure	= 'json'
-			when 'string'
-				params.Message = payload
-			else
-				throw new TypeError 'Invalid SNS message type'
+		type = typeof payload
+
+		if type is 'object' and payload isnt null
+			params.Message = JSON.stringify payload
+			params.MessageStructure	= 'json'
+
+		else if type is 'string'
+			params.Message = payload
+
+		else
+			throw new TypeError 'Invalid SNS message type'
 
 		if Object.keys(attributes).length
 			messageAttributes = {}
