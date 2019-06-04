@@ -47,15 +47,14 @@ export default class SnsMiddleware extends Middleware
 
 export class Sns
 
-	constructor: (@client) ->
+	constructor: (@client, @region, @accountId) ->
 
-	publish: (service, name, subject, payload, attributes) ->
+	publish: (service, topicName, subject, payload, attributes) ->
 		arn = [
-			'arn:aws:states'
+			'arn:aws:sns'
 			@region
 			@accountId
-			'stateMachine'
-			"#{service}__#{name}"
+			"#{service}__#{topicName}"
 		].join ':'
 
 		params = {
