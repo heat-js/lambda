@@ -9,7 +9,6 @@ export default class Validator
 		try
 			return await @validator.validate input, @getValidationSchema(fields)
 		catch error
-			console.log error
 			throw new ValidationError error.details[0].message
 
 	getValidationSchema: (fields) ->
