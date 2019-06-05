@@ -1,19 +1,18 @@
 
-import Middleware from './abstract'
+import Middleware	from './abstract'
+import warmer		from 'lambda-warmer'
 
 export default class Warmer extends Middleware
 
+	constructor: (@options) ->
+
 	handle: (app, next) ->
 
-		input = app.input
+		options = { correlationId: app.context.awsRequestId }
+		options = Object.assign options, @options
 
-		if (
-			typeof input is 'object' and
-			input.warmer
-		)
-			message = 'Warming...'
-			console.log message
-			app.output = message
+		if await warmer app.input, options
+			app.output = 'warmed'
 			return
 
 		await next()

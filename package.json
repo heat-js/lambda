@@ -21,7 +21,8 @@
   "dependencies": {
     "@bugsnag/js": "^5.0.1",
     "@heat/container": "^0.0.1",
-    "extendable-error": "^0.1.5"
+    "extendable-error": "^0.1.5",
+    "lambda-warmer": "^1.1.2"
   },
   "devDependencies": {
     "@heat/npm-coffee-publisher": "^0.1.6"

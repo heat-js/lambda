@@ -1,12 +1,12 @@
 
 import Container 	from '@heat/container'
-import Warmer 		from './middleware/warmer'
+# import Warmer 		from './middleware/warmer'
 import compose 		from './compose'
 import EventEmitter from 'events'
 
 export default (middlewares...) ->
 
-	middlewares.unshift new Warmer
+	# middlewares.unshift new Warmer
 
 	fn 		= compose middlewares
 	emitter = new EventEmitter
