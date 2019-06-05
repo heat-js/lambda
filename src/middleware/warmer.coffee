@@ -5,6 +5,7 @@ import warmer		from 'lambda-warmer'
 export default class Warmer extends Middleware
 
 	constructor: (@options) ->
+		super()
 
 	handle: (app, next) ->
 
