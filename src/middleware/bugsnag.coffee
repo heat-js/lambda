@@ -19,6 +19,12 @@ export default class Bugsnag extends Middleware
 			process.env.BUGSNAG_API_KEY
 		)
 
+	testingEnv: ->
+		return !!(
+			process.env.JEST_WORKER_ID or
+			process.env.TESTING
+		)
+
 	handle: (app, next) ->
 
 		apiKey = @getApiKey app
@@ -60,6 +66,9 @@ export default class Bugsnag extends Middleware
 			throw error
 
 	log: (error, context = {}, input = {}, metaData = {}) ->
+		if @testingEnv()
+			return
+
 		params = {
 			metaData: Object.assign(
 				{}
