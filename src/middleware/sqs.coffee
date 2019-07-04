@@ -44,30 +44,46 @@ export class Sqs
 		queueName = if name then "#{service}__#{name}" else service
 		queueUrl  = await @sqsUrlResolver.fromName queueName
 
-		return @client.sendMessage({
+		return @client.sendMessage {
 			QueueUrl: 		queueUrl
 			MessageBody: 	JSON.stringify payload
 			DelaySeconds: 	delay
-		}).promise()
+
+			MessageAttributes: {
+				'queue': {
+					DataType:		'String'
+					StringValue:	queueName
+				}
+			}
+		}
+		.promise()
 
 	batch: (service, name, payloads = [], delay = 0) ->
+		queueName = if name then "#{service}__#{name}" else service
+		queueUrl  = await @sqsUrlResolver.fromName queueName
+
 		entries = payloads.map (payload, index) ->
 			return {
 				Id: 			String index
 				MessageBody: 	JSON.stringify payload
 				DelaySeconds: 	delay
-			}
 
-		queueName = if name then "#{service}__#{name}" else service
-		queueUrl  = await @sqsUrlResolver.fromName queueName
+				MessageAttributes: {
+					'originalqueue': {
+						DataType:	 	'String'
+						StringValue: 	queueName
+					}
+				}
+			}
 
 		chunks = @chunk entries
 
 		return Promise.all chunks.map (entries) =>
-			return @client.sendMessageBatch({
+			return @client.sendMessageBatch {
 				QueueUrl: 	queueUrl
 				Entries: 	entries
-			}).promise()
+			}
+			.promise()
 
 	chunk: (entries, size = 10) ->
 		chunks = []

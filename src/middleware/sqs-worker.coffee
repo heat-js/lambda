@@ -29,7 +29,17 @@ export default class SqsWorker
 
 		for record in records
 			payload = JSON.parse record.body
-			promises.push @workerCallback app, payload
+			msgAttr = record.messageAttributes
+
+			attributes = {}
+			for key, attribute of msgAttr
+				switch attribute.dataType
+					when 'String'
+						value = attribute.stringValue
+
+				attributes[key] = value
+
+			promises.push @workerCallback app, payload, attributes
 
 		await Promise.all promises
 
