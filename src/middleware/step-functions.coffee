@@ -50,12 +50,14 @@ export class StepFunctions
 	constructor: (@client, @region, @accountId) ->
 
 	start: (service, name, payload, idempotentKey = null) ->
+		stateMachineName = if name then "#{service}__#{name}" else service
+
 		arn = [
 			'arn:aws:states'
 			@region
 			@accountId
 			'stateMachine'
-			"#{service}__#{name}"
+			stateMachineName
 		].join ':'
 
 		try
