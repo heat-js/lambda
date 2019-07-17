@@ -4,7 +4,7 @@ import AWS 				from 'aws-sdk'
 
 export default class SSM extends Middleware
 
-	constructor: (@saveInMemory = true) ->
+	constructor: (@saveInMemory = true, @clientOptions = {}) ->
 		super()
 
 	handle: (app, next) ->
@@ -30,9 +30,11 @@ export default class SSM extends Middleware
 			WithDecryption: true
 		}
 
-		ssm = new AWS.SSM {
+		options = Object.assign {
 			apiVersion: '2014-11-06'
-		}
+		}, @clientOptions
+
+		ssm = new AWS.SSM options
 
 		result = await ssm.getParameters(params).promise()
 
