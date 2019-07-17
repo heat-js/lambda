@@ -4,9 +4,6 @@ import AWS			from 'aws-sdk'
 
 export default class SqsMiddleware extends Middleware
 
-	constructor: (@clientOptions = {}) ->
-		super()
-
 	region: (app) ->
 		return (
 			app.has('config') and
@@ -21,12 +18,10 @@ export default class SqsMiddleware extends Middleware
 	handle: (app, next) ->
 
 		app.sqsClient = =>
-			options = Object.assign {
+			return new AWS.SQS {
 				apiVersion: '2012-11-05'
 				region: 	@region app
-			}, @clientOptions
-
-			return new AWS.SQS options
+			}
 
 		app.sqsUrlResolver = ->
 			return new SqsUrlResolver app.sqsClient

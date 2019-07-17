@@ -4,7 +4,7 @@ import AWS 				from 'aws-sdk'
 
 export default class SSM extends Middleware
 
-	constructor: (@saveInMemory = true, @clientOptions = {}) ->
+	constructor: (@saveInMemory = true) ->
 		super()
 
 	handle: (app, next) ->
@@ -12,13 +12,15 @@ export default class SSM extends Middleware
 			await @promise
 			return next()
 
-		@promise = @resolveSsmValues process.env
+		@setClient app
+
+		@promise = @resolveSsmValues process.env, app.ssmClient
 		env = await @promise
 
 		Object.assign process.env, env
 		await next()
 
-	resolveSsmValues: (input) ->
+	resolveSsmValues: (input, client) ->
 		paths = @getSsmPaths input
 		names = paths.map (i) -> i.path
 
@@ -30,13 +32,7 @@ export default class SSM extends Middleware
 			WithDecryption: true
 		}
 
-		options = Object.assign {
-			apiVersion: '2014-11-06'
-		}, @clientOptions
-
-		ssm = new AWS.SSM options
-
-		result = await ssm.getParameters(params).promise()
+		result = await client.getParameters(params).promise()
 
 		if result.InvalidParameters and result.InvalidParameters.length
 			throw new Error "SSM parameter(s) not found - ['ssm:#{
@@ -73,3 +69,9 @@ export default class SSM extends Middleware
 				}
 
 		return list
+
+	setClient: (app) ->
+		app.ssmClient = ->
+			return new AWS.SSM {
+				apiVersion: '2014-11-06'
+			}
