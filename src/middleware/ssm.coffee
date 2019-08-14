@@ -12,7 +12,13 @@ export default class SSM extends Middleware
 			await @promise
 			return next()
 
-		@setClient app
+		app.ssmClient = ->
+			if app.has 'awsCredentials'
+				AWS.config.credentials = app.awsCredentials
+
+			return new AWS.SSM {
+				apiVersion: '2014-11-06'
+			}
 
 		@promise = @resolveSsmValues process.env, app.ssmClient
 		env = await @promise
@@ -69,9 +75,3 @@ export default class SSM extends Middleware
 				}
 
 		return list
-
-	setClient: (app) ->
-		app.ssmClient = ->
-			return new AWS.SSM {
-				apiVersion: '2014-11-06'
-			}
