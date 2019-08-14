@@ -13,8 +13,7 @@ export default class SSM extends Middleware
 			return next()
 
 		app.ssmClient = ->
-			if app.has 'awsCredentials'
-				AWS.config.credentials = app.awsCredentials
+			await @setAwsCredentials app
 
 			return new AWS.SSM {
 				apiVersion: '2014-11-06'
