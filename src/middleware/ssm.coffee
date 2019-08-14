@@ -7,17 +7,29 @@ export default class SSM extends Middleware
 	constructor: (@saveInMemory = true) ->
 		super()
 
+	region: (app) ->
+		return (
+			app.has('config') and
+			app.config.aws and
+			app.config.aws.region
+		) or (
+			process.env.AWS_REGION
+		) or (
+			'eu-west-1'
+		)
+
 	handle: (app, next) ->
+		await @setAwsCredentials app
+
+		app.ssmClient = =>
+			return new AWS.SSM {
+				apiVersion: '2014-11-06'
+				region: 	@region app
+			}
+
 		if @saveInMemory and @promise
 			await @promise
 			return next()
-
-		app.ssmClient = =>
-			await @setAwsCredentials app
-
-			return new AWS.SSM {
-				apiVersion: '2014-11-06'
-			}
 
 		@promise = @resolveSsmValues process.env, app.ssmClient
 		env = await @promise

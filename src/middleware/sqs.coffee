@@ -16,10 +16,9 @@ export default class SqsMiddleware extends Middleware
 		)
 
 	handle: (app, next) ->
+		await @setAwsCredentials app
 
 		app.sqsClient = =>
-			await @setAwsCredentials app
-
 			return new AWS.SQS {
 				apiVersion: '2012-11-05'
 				region: 	@region app

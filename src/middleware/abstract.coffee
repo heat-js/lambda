@@ -1,4 +1,6 @@
 
+import AWS from 'aws-sdk'
+
 export default class AbstractMiddleware
 
 	handle: (app, next) ->
