@@ -12,7 +12,7 @@ export default class SSM extends Middleware
 			await @promise
 			return next()
 
-		app.ssmClient = ->
+		app.ssmClient = =>
 			await @setAwsCredentials app
 
 			return new AWS.SSM {
