@@ -7,27 +7,40 @@ export default class SSM extends Middleware
 	constructor: (@saveInMemory = true) ->
 		super()
 
+	region: (app) ->
+		return (
+			app.has('config') and
+			app.config.aws and
+			app.config.aws.region
+		) or (
+			process.env.AWS_REGION
+		) or (
+			'eu-west-1'
+		)
+
 	handle: (app, next) ->
+		app.ssmClient = =>
+			return new AWS.SSM {
+				apiVersion: '2014-11-06'
+				region: 	@region app
+			}
+
 		if @saveInMemory and @promise
 			await @promise
 			return next()
 
-		@promise = @resolveSsmValues process.env
+		@promise = @resolveSsmValues process.env, app.ssmClient
 		env = await @promise
 
 		Object.assign process.env, env
 		await next()
 
-	resolveSsmValues: (input) ->
+	resolveSsmValues: (input, client) ->
 		paths = @getSsmPaths input
 		names = paths.map (i) -> i.path
 
 		if !names.length
 			return
-
-		ssm = new AWS.SSM {
-			apiVersion: '2014-11-06'
-		}
 
 		chunkedNames = @chunkArray names, 10
 		values = await Promise.all chunkedNames.map (names) =>
@@ -35,7 +48,7 @@ export default class SSM extends Middleware
 				Names: names
 				WithDecryption: true
 			}
-			result = await ssm.getParameters(params).promise()
+			result = await client.getParameters(params).promise()
 
 			if result.InvalidParameters and result.InvalidParameters.length
 				throw new Error "SSM parameter(s) not found - ['ssm:#{
