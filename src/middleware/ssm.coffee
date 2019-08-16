@@ -25,29 +25,43 @@ export default class SSM extends Middleware
 		if !names.length
 			return
 
-		params = {
-			Names: names
-			WithDecryption: true
-		}
-
 		ssm = new AWS.SSM {
 			apiVersion: '2014-11-06'
 		}
 
-		result = await ssm.getParameters(params).promise()
+		chunkedNames = @chunkArray names, 10
+		values = await Promise.all chunkedNames.map (names) =>
+			params = {
+				Names: names
+				WithDecryption: true
+			}
+			result = await ssm.getParameters(params).promise()
 
-		if result.InvalidParameters and result.InvalidParameters.length
-			throw new Error "SSM parameter(s) not found - ['ssm:#{
-				result.InvalidParameters.join "', 'ssm:"
-			}']"
+			if result.InvalidParameters and result.InvalidParameters.length
+				throw new Error "SSM parameter(s) not found - ['ssm:#{
+					result.InvalidParameters.join "', 'ssm:"
+				}']"
 
-		values = @parseValues result.Parameters
+			return @parseValues result.Parameters
+
+		values = @flattenArray values
 
 		output = {}
 		for item in paths
 			output[item.key] = values[item.path]
 
 		return output
+
+	chunkArray: (array, size = 10) ->
+		i = 0
+		newArray = []
+		while (i += size) < array.length
+			newArray.push array.slice i, i + size
+
+		return newArray
+
+	flattenArray: (array) ->
+		return Array.prototype.concat.apply [], array
 
 	parseValues: (params) ->
 		values = {}
