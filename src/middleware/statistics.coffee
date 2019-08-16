@@ -12,7 +12,7 @@ export default class StatisticsMiddleware extends Middleware
 		await next()
 
 
-export default class Statistics
+export class Statistics
 
 	constructor: (@sqs) ->
 
