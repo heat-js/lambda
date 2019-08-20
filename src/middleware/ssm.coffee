@@ -57,7 +57,7 @@ export default class SSM extends Middleware
 
 			return @parseValues result.Parameters
 
-		values = @flattenArray values
+		values = @mergeObjects values
 
 		output = {}
 		for item in paths
@@ -72,6 +72,13 @@ export default class SSM extends Middleware
 			newArray.push array.slice i, i + size
 
 		return newArray
+
+	mergeObjects: (array) ->
+		merged = {}
+		for object in array
+			Object.assign merged, object
+
+		return merged
 
 	flattenArray: (array) ->
 		return Array.prototype.concat.apply [], array
