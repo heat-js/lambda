@@ -71,10 +71,11 @@ export default class Bugsnag extends Middleware
 
 
 	log: (error, context = {}, input = {}, metaData = {}) ->
-		console.error error
 
 		if @testingEnv()
 			return
+
+		console.error error
 
 		params = {
 			metaData: Object.assign(
