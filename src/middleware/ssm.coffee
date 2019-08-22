@@ -68,8 +68,9 @@ export default class SSM extends Middleware
 	chunkArray: (array, size = 10) ->
 		i = 0
 		newArray = []
-		while (i += size) < array.length
+		while i < array.length
 			newArray.push array.slice i, i + size
+			i += size
 
 		return newArray
 

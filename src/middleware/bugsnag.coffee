@@ -56,16 +56,23 @@ export default class Bugsnag extends Middleware
 				metaData
 			)
 
-		try
-			await next()
+		app.value 'errorWrapper', (fn) ->
+			return (...args) ->
+				try
+					await fn.apply null, args
 
-		catch error
-			if not ( error instanceof ViewableError )
-				await app.log error
+				catch error
+					if not ( error instanceof ViewableError )
+						await app.log error
 
-			throw error
+					throw error
+
+		await app.errorWrapper(next)()
+
 
 	log: (error, context = {}, input = {}, metaData = {}) ->
+		console.error error
+
 		if @testingEnv()
 			return
 
