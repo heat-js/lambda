@@ -16,14 +16,22 @@ export class Statistics
 
 	constructor: (@sqs) ->
 
-	put: ({ name, value, unit, dimensions }) ->
+	put: (metric) ->
+
+		if not Array.isArray metric
+			metric = [ metric ]
+
+		metric = metric.map (item) ->
+			return {
+				name: 		item.name
+				value: 		item.value
+				unit: 		item.unit
+				dimensions: item.dimensions
+				date:		item.date or (new Date).toISOString()
+			}
+
 		return @sqs.send(
 			'statistics'
 			'metric'
-			{
-				name
-				value
-				unit
-				dimensions
-			}
+			metric
 		)
