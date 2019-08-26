@@ -23,6 +23,7 @@ export class Statistics
 
 		metric = metric.map (item) ->
 			return {
+				namespace:	item.namespace
 				name: 		item.name
 				value: 		item.value
 				unit: 		item.unit
