@@ -6,7 +6,6 @@ import crypto		from 'crypto'
 export default class StatisticsMiddleware extends Middleware
 
 	handle: (app, next) ->
-
 		app.statistics = ->
 			return new Statistics app.sqs
 
@@ -19,15 +18,14 @@ export class Statistics
 
 	generateIdempotentKey: ->
 		return crypto
-			.randomBytes 64
-			.toString 'hex'
+			.randomBytes 32
+			.toString 'base64'
 
 	put: (metric) ->
-
 		if not Array.isArray metric
 			metric = [ metric ]
 
-		metric = metric.map (item) ->
+		metric = metric.map (item) =>
 			return {
 				namespace:		item.namespace
 				name: 			item.name
