@@ -9,10 +9,10 @@ export default class Validator
 		try
 			return await @validator.validate input, @getValidationSchema(fields)
 		catch error
-			if not error.details[0]
-				message = error.message
-			else
+			if error.details[0]?
 				message = error.details[0].message
+			else
+				message = error.message
 
 			throw new ValidationError message
 
