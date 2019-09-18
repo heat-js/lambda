@@ -9,7 +9,12 @@ export default class Validator
 		try
 			return await @validator.validate input, @getValidationSchema(fields)
 		catch error
-			throw new ValidationError error.details[0].message
+			if not error.details[0]
+				message = error.message
+			else
+				message = error.details[0].message
+
+			throw new ValidationError message
 
 	getValidationSchema: (fields) ->
 		if Array.isArray fields
