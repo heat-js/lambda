@@ -6,6 +6,12 @@ export class EnvParser
 		@integer 	= @int
 		@boolean 	= @bool
 
+	testingEnv: ->
+		return !!(
+			process.env.JEST_WORKER_ID or
+			process.env.TESTING
+		)
+
 	get:(name, defaultValue) ->
 		value = @data[name]
 
@@ -14,6 +20,9 @@ export class EnvParser
 
 		if typeof defaultValue isnt 'undefined'
 			return defaultValue
+
+		if @testingEnv()
+			return null
 
 		throw new TypeError [
 			'Environment variable '
