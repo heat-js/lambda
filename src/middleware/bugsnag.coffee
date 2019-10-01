@@ -29,14 +29,15 @@ export default class Bugsnag extends Middleware
 
 		apiKey = @getApiKey app
 
-		if not apiKey
-			throw new Error 'Bugsnag API key not found'
+		if not @testingEnv()
+			if not apiKey
+				throw new Error 'Bugsnag API key not found'
 
-		if typeof apiKey isnt 'string'
-			throw new Error 'Bugsnag API key should be a string'
+			if typeof apiKey isnt 'string'
+				throw new Error 'Bugsnag API key should be a string'
 
-		if -1 < apiKey.indexOf 'ssm:/'
-			throw new Error 'SSM Bugsnag API key is invalid'
+			if -1 < apiKey.indexOf 'ssm:/'
+				throw new Error 'SSM Bugsnag API key is invalid'
 
 		if not @bugsnag
 			@bugsnag = bugsnag {
