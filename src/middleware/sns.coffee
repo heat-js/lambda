@@ -46,30 +46,30 @@ export default class SnsMiddleware extends Middleware
 
 
 export class Sns
-
 	constructor: (@client, @region, @accountId) ->
-
-	publish: (service, topicName, subject, payload, attributes) ->
-		arn = [
+	publish: ({ service, topic, arn, subject, message, attributes }) ->
+		arn = arn or [
 			'arn:aws:sns'
 			@region
 			@accountId
-			"#{service}__#{topicName}"
+			"#{service}__#{topic}"
 		].join ':'
 
 		params = {
-			TopicArn: 	arn
-			Subject:	subject
+			TopicArn: arn
 		}
 
-		type = typeof payload
+		if subject
+			params.Subject = subject
 
-		if type is 'object' and payload isnt null
-			params.Message = JSON.stringify payload
+		type = typeof message
+
+		if type is 'object' and message isnt null
+			params.Message = JSON.stringify message
 			params.MessageStructure	= 'json'
 
 		else if type is 'string'
-			params.Message = payload
+			params.Message = message
 
 		else
 			throw new TypeError 'Invalid SNS message type'

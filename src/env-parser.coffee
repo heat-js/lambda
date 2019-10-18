@@ -22,7 +22,7 @@ export class EnvParser
 			return defaultValue
 
 		if @testingEnv()
-			return null
+			return ''
 
 		throw new TypeError [
 			'Environment variable '
@@ -55,7 +55,7 @@ export class EnvParser
 			when 'false', 'FALSE', 'no', '0'
 				return false
 
-		return value
+		return !!value
 
 	array: (name, defaultValue, sep = ',') ->
 		value = @get name, defaultValue
