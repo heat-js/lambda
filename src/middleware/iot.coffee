@@ -12,7 +12,7 @@ export default class Iot extends Middleware
 		) or (
 			process.env.IOT_ENDPOINT
 		) or (
-			await @describeEndpoint()
+			await @describeEndpoint app
 		)
 
 	describeEndpoint: (app) ->
@@ -39,16 +39,16 @@ export default class Iot extends Middleware
 				apiVersion: '2015-05-28'
 			}
 
-		app.webSocket = ->
-			return new WebSocket app.iotData
+		app.pubsub = ->
+			return new PubSub app.iotData
 
 		await next()
 
-export class WebSocket
+export class PubSub
 
 	constructor: (@iotData) ->
 
-	send: ({ topic, id, event, payload, qos: 1 }) ->
+	publish: ({ topic, id, event, payload, qos }) ->
 		data =
 			e: event
 			v: payload
@@ -56,8 +56,8 @@ export class WebSocket
 		if id
 			data.i = id
 
-		await @iotData.publish {
-			qos
+		return @iotData.publish {
+			qos: qos or 1
 			topic
 			payload: JSON.stringify data
 		}
