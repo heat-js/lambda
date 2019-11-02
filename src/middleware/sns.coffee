@@ -66,7 +66,7 @@ export class Sns
 
 		if type is 'object' and message isnt null
 			params.Message = JSON.stringify message
-			params.MessageStructure	= 'json'
+			# params.MessageStructure	= 'json'
 
 		else if type is 'string'
 			params.Message = message
