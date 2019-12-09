@@ -12,9 +12,9 @@ export default class Joi extends Middleware
 
 		app.joi = ->
 			rules  = if app.has 'rules' then app.rules else {}
-			errMsg = if app.has 'errorMessages' then app.errorMessages else {}
+			errorMessages = if app.has 'errorMessages' then app.errorMessages else {}
 
-			return new Validator joi, rules, errMsg
+			return new Validator joi, rules, errorMessages
 
 		app.validate = ->
 			return app.joi.validate.bind app.joi
@@ -33,15 +33,11 @@ export class Validator
 	validate: (input, fields) ->
 
 		schema = @getValidationSchema fields
-		schema = @customErrorMessages schema
 
 		try
 			return await @validator.validate input, schema
 		catch error
-			if error.details? and Array.isArray error.details
-				message = error.details[0].message
-			else
-				message = error.message
+			message = @customErrorMessages error
 
 			throw new ValidationError message
 
@@ -63,25 +59,23 @@ export class Validator
 
 		return schema
 
-	customErrorMessages: (schema) ->
-		for field, errorTypes of @errorMessages
-			item = schema[field]
+	customErrorMessages: (error) ->
+		if not Array.isArray error.details
+			return error.message
 
-			if not item
-				throw new Error 'No validation rule found for field: ' + field
+		details = error.details[0]
+		context = details.context
+		custom  = @errorMessages
 
-			item.error (errors) ->
-				for error in errors
-					custom = errorTypes[error.type]
+		for path in details.path
+			custom = custom[path]
 
-					if not custom
-						continue
+			if not custom
+				return details.message
 
-					if typeof custom is 'string'
-						error.message = custom
-					else
-						error.message = custom error
+		custom = custom[details.type]
 
-				return errors
+		if typeof custom is 'string'
+			return custom
 
-		return schema
+		return custom error
