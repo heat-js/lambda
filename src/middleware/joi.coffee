@@ -73,7 +73,13 @@ export class Validator
 			if not custom
 				return details.message
 
-		custom = custom[details.type]
+		[type, key] = details.type.split '.'
+
+		if not custom = custom[type]
+			return error.message
+
+		if not custom = custom[key]
+			return error.message
 
 		if typeof custom is 'string'
 			return custom
