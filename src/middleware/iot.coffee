@@ -12,6 +12,9 @@ export default class Iot extends Middleware
 		) or (
 			process.env.IOT_ENDPOINT
 		) or (
+			process.env.JEST_WORKER_ID or
+			process.env.TESTING
+		) or (
 			await @describeEndpoint app
 		)
 
@@ -48,10 +51,10 @@ export class PubSub
 
 	constructor: (@iotData) ->
 
-	publish: ({ topic, id, event, payload, qos }) ->
+	publish: ({ topic, id, event, value, qos }) ->
 		data =
 			e: event
-			v: payload
+			v: value
 
 		if id
 			data.i = id

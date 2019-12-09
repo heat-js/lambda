@@ -36,7 +36,7 @@ export class LambdaInvoker
 
 	constructor: (@client) ->
 
-	invoke: (service, name, payload) ->
+	invoke: ({ service, name, payload }) ->
 		result = await @client.invoke {
 			FunctionName: 	"#{service}__#{name}"
 			Payload: 		JSON.stringify payload
