@@ -78,4 +78,4 @@ export class Validator
 		if typeof custom is 'string'
 			return custom
 
-		return custom error
+		return custom context
