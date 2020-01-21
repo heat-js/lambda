@@ -19,7 +19,7 @@ export default class SSM extends Middleware
 		)
 
 	handle: (app, next) ->
-		app.ssmClient = =>
+		app.ssm = =>
 			return new AWS.SSM {
 				apiVersion: '2014-11-06'
 				region: 	@region app
@@ -29,7 +29,7 @@ export default class SSM extends Middleware
 			await @promise
 			return next()
 
-		@promise = @resolveSsmValues process.env, app.ssmClient
+		@promise = @resolveSsmValues process.env, app.ssm
 		env = await @promise
 
 		Object.assign process.env, env
