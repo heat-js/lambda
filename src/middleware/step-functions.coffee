@@ -49,7 +49,7 @@ export class StepFunctions
 
 	constructor: (@client, @region, @accountId) ->
 
-	start: (service, name, payload, idempotentKey = null) ->
+	start: ({ service, name, payload, idempotentKey = null }) ->
 		stateMachineName = if name then "#{service}__#{name}" else service
 
 		arn = [
@@ -76,7 +76,7 @@ export class StepFunctions
 
 		return
 
-	sendTaskSuccess: (taskToken, output = {}) ->
+	sendTaskSuccess: ({ taskToken, output = {} }) ->
 		output = JSON.stringify output
 
 		await @client.sendTaskSuccess {
@@ -85,7 +85,7 @@ export class StepFunctions
 		}
 		.promise()
 
-	sendTaskFailure: (taskToken, errorCode, cause) ->
+	sendTaskFailure: ({ taskToken, errorCode, cause }) ->
 		await @client.sendTaskFailure {
 			taskToken
 			error: errorCode

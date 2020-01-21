@@ -39,7 +39,7 @@ export class Sqs
 	constructor: (@client, @sqsUrlResolver) ->
 		@cache = new Map
 
-	send: (service, name, payload, delay = 0) ->
+	send: ({ service, name, payload, delay = 0 }) ->
 		queueName = if name then "#{service}__#{name}" else service
 		queueUrl  = await @sqsUrlResolver.fromName queueName
 
@@ -57,7 +57,7 @@ export class Sqs
 		}
 		.promise()
 
-	batch: (service, name, payloads = [], delay = 0) ->
+	batch: ({ service, name, payloads = [], delay = 0 }) ->
 		queueName = if name then "#{service}__#{name}" else service
 		queueUrl  = await @sqsUrlResolver.fromName queueName
 
