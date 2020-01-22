@@ -5,6 +5,7 @@ export class EnvParser
 		@string 	= @str
 		@integer 	= @int
 		@boolean 	= @bool
+		@object 	= @obj
 
 	testingEnv: ->
 		return !!(
@@ -67,6 +68,14 @@ export class EnvParser
 		array = array.map (item) -> item.trim()
 
 		return array
+
+	obj: (name, defaultValue) ->
+		value = @get name, defaultValue
+
+		if typeof value is 'object' and value isnt null
+			return value
+
+		return JSON.parse String value
 
 	enum: (name, possibilities, defaultValue) ->
 
