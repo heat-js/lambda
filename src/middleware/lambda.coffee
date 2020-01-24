@@ -1,7 +1,8 @@
 
 
-import Middleware 	from './abstract'
-import AWS			from 'aws-sdk'
+import Middleware 		from './abstract'
+import AWS				from 'aws-sdk'
+import ViewableError 	from '../error/viewable-error'
 
 export default class Lambda extends Middleware
 
@@ -46,7 +47,12 @@ export class LambdaInvoker
 		response = JSON.parse result.Payload
 
 		if typeof response is 'object' and response isnt null and response.errorMessage
-			error = new Error response.errorMessage
+			if response.errorType is 'ViewableError'
+				ErrorType = ViewableError
+			else
+				ErrorType = Error
+
+			error = new ErrorType response.errorMessage
 			error.name 		= response.errorType
 			error.response 	= response
 			error.metadata 	= {
