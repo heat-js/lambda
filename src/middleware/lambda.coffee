@@ -47,7 +47,7 @@ export class LambdaInvoker
 		response = JSON.parse result.Payload
 
 		if typeof response is 'object' and response isnt null and response.errorMessage
-			if response.errorType is 'ViewableError'
+			if response.errorType is 'ViewableError' or 0 is response.errorMessage.indexOf '[viewable] '
 				ErrorType = ViewableError
 			else
 				ErrorType = Error
