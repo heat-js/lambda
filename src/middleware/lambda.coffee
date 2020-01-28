@@ -61,3 +61,14 @@ export class LambdaInvoker
 			throw error
 
 		return response
+
+	invokeAsync: ({ service, name, payload }) ->
+		result = await @client.invoke {
+			FunctionName: 	"#{service}__#{name}"
+			InvokeArgs: 	JSON.stringify payload
+		}
+		.promise()
+
+		console.log result
+
+		return
