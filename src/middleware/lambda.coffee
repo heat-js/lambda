@@ -63,12 +63,8 @@ export class LambdaInvoker
 		return response
 
 	invokeAsync: ({ service, name, payload }) ->
-		result = await @client.invoke {
+		return await @client.invokeAsync {
 			FunctionName: 	"#{service}__#{name}"
 			InvokeArgs: 	JSON.stringify payload
 		}
 		.promise()
-
-		console.log result
-
-		return
