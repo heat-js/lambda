@@ -11,14 +11,14 @@ export default class SqsWorker
 		# Single queue processed
 
 		if not (typeof input is 'object' and input isnt null)
-			app.value 'records', [input]
+			app.value 'records', [{ payload: input }]
 			await next()
 			return
 
 		records = input.Records
 
 		if not Array.isArray records
-			app.value 'records', [input]
+			app.value 'records', [{ payload: input }]
 			await next()
 			return
 
