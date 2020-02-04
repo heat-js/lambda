@@ -1,7 +1,7 @@
 
 export default class SqsWorker
 
-	constructor: (@workerCallback) ->
+	constructor: ->
 
 	handle: (app, next) ->
 
@@ -11,21 +11,21 @@ export default class SqsWorker
 		# Single queue processed
 
 		if not (typeof input is 'object' and input isnt null)
-			await @workerCallback app, input
+			app.value 'records', [input]
 			await next()
 			return
 
 		records = input.Records
 
 		if not Array.isArray records
-			await @workerCallback app, input
+			app.value 'records', [input]
 			await next()
 			return
 
 		# ----------------------------------------------------
 		# Batch of qeueue processed
 
-		promises = []
+		payloads = []
 
 		for record in records
 			payload = JSON.parse record.body
@@ -37,8 +37,11 @@ export default class SqsWorker
 					when 'String'
 						attributes[key] = attribute.stringValue
 
-			promises.push @workerCallback app, payload, attributes
+			payloads.push {
+				payload
+				attributes
+			}
 
-		await Promise.all promises
+		app.value 'records', payloads
 
 		await next()
