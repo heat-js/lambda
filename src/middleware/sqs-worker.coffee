@@ -15,6 +15,13 @@ export default class SqsWorker
 			await next()
 			return
 
+		if Array.isArray input
+			app.value 'records', input.map (payload) ->
+				return { payload }
+
+			await next()
+			return
+
 		records = input.Records
 
 		if not Array.isArray records
