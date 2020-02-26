@@ -30,12 +30,12 @@ export class Validator
 
 	constructor: (@validator, @rules, @errorMessages) ->
 
-	validate: (input, fields) ->
+	validate: (input, fields, options) ->
 
 		schema = @getValidationSchema fields
 
 		try
-			return await @validator.validate input, schema
+			return await @validator.validate input, schema, options
 		catch error
 			message = @customErrorMessages error
 
