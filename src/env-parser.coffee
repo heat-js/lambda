@@ -75,7 +75,10 @@ export class EnvParser
 		if typeof value is 'object' and value isnt null
 			return value
 
-		return JSON.parse String value
+		if typeof value is 'string'
+			return JSON.parse value
+
+		return {}
 
 	enum: (name, possibilities, defaultValue) ->
 
