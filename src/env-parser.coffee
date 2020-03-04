@@ -13,7 +13,7 @@ export class EnvParser
 			process.env.TESTING
 		)
 
-	get:(name, defaultValue) ->
+	get:(name, defaultValue, defaultTestingValue) ->
 		value = @data[name]
 
 		if typeof value isnt 'undefined'
@@ -23,7 +23,7 @@ export class EnvParser
 			return defaultValue
 
 		if @testingEnv()
-			return ''
+			return defaultTestingValue
 
 		throw new TypeError [
 			'Environment variable '
@@ -32,34 +32,34 @@ export class EnvParser
 		].join '"'
 
 	str: (name, defaultValue) ->
-		value = @get name, defaultValue
+		value = @get name, defaultValue, ''
 
 		return String value
 
 	int: (name, defaultValue) ->
-		value = @get name, defaultValue
+		value = @get name, defaultValue, 0
 
 		return parseInt value, 10
 
 	float: (name, defaultValue) ->
-		value = @get name, defaultValue
+		value = @get name, defaultValue, 0
 
 		return parseFloat value
 
 	bool: (name, defaultValue) ->
-		value = @get name, defaultValue
+		value = @get name, defaultValue, false
 
 		switch value
-			when 'true', 'TRUE', 'yes', '1'
+			when true, 1, 'true', 'TRUE', 'yes', '1'
 				return true
 
-			when 'false', 'FALSE', 'no', '0'
+			when false, 0, 'false', 'FALSE', 'no', '0'
 				return false
 
 		return !!value
 
 	array: (name, defaultValue, sep = ',') ->
-		value = @get name, defaultValue
+		value = @get name, defaultValue, []
 
 		if Array.isArray value
 			return value
@@ -70,19 +70,24 @@ export class EnvParser
 		return array
 
 	obj: (name, defaultValue) ->
-		value = @get name, defaultValue
+		value = @get name, defaultValue, {}
 
 		if typeof value is 'object' and value isnt null
 			return value
 
-		if typeof value is 'string' and value isnt ''
-			return JSON.parse value
+		# if typeof value is 'string' and value isnt ''
+		# 	return JSON.parse value
 
-		return {}
+		try
+			result = JSON.parse value
+		catch error
+			throw new TypeError "Environment variable #{ name } isn\'t valid JSON."
+
+		return result
 
 	enum: (name, possibilities, defaultValue) ->
 
-		value = @get name, defaultValue
+		value = @get name, defaultValue, ''
 
 		if not possibilities.includes value
 			throw new TypeError [
