@@ -75,9 +75,6 @@ export class EnvParser
 		if typeof value is 'object' and value isnt null
 			return value
 
-		# if typeof value is 'string' and value isnt ''
-		# 	return JSON.parse value
-
 		try
 			result = JSON.parse value
 		catch error
