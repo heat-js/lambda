@@ -47,7 +47,7 @@ export default class SnsMiddleware extends Middleware
 
 export class Sns
 	constructor: (@client, @region, @accountId) ->
-	publish: ({ service, topic, arn, subject, message, attributes }) ->
+	publish: ({ service, topic, arn, subject, message, payload, attributes }) ->
 		arn = arn or [
 			'arn:aws:sns'
 			@region
@@ -61,6 +61,9 @@ export class Sns
 
 		if subject
 			params.Subject = subject
+
+		if payload
+			message = payload
 
 		type = typeof message
 
