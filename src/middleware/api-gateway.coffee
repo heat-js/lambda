@@ -63,16 +63,16 @@ export class Request
 
 		return result
 
-	@parseIps = (headers) ->
-		ips = headers['x-forwarded-for'] or ''
-		ips = ips.split ','
-		ips = ips.map (ip) ->
-			return ip.trim()
+	# @parseIps = (headers) ->
+	# 	ips = headers['x-forwarded-for'] or ''
+	# 	ips = ips.split ','
+	# 	ips = ips.map (ip) ->
+	# 		return ip.trim()
 
-		ips = ips.filter (ip) ->
-			return ip
+	# 	ips = ips.filter (ip) ->
+	# 		return ip
 
-		return ips
+	# 	return ips
 
 	@parseMethod = (method = 'GET') ->
 		return method.toUpperCase()
@@ -83,7 +83,7 @@ export class Request
 
 		return body
 
-	@fromApiGateway: (input) ->
+	@fromApiGateway: (input, context) ->
 		data = {
 			path: 		input.path
 			method: 	input.httpMethod
@@ -91,6 +91,7 @@ export class Request
 			params: 	input.pathParameters
 			query:		input.queryStringParameters
 			body:		input.body
+			ip:			context.identity.sourceIp
 		}
 
 		return new Request data
@@ -101,8 +102,7 @@ export class Request
 		@params 	= options.params or {}
 		@query 		= options.query or {}
 		@body 		= Request.parseBody options.body, @headers['content-type']
-		@ips 		= Request.parseIps @headers
-		@ip 		= @ips[0]
+		@ip 		= options.ip
 
 	get: (name, defaultValue) ->
 		return @headers[name.toLowerCase()] or defaultValue
