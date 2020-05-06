@@ -13,10 +13,7 @@ export default class ApiGateway
 	handle: (app, next) ->
 
 		app.request = ->
-			return Request.fromApiGateway(
-				app.input
-				app.context
-			)
+			return Request.fromApiGateway app.input
 
 		app.response = ->
 			return new Response app.request
@@ -83,7 +80,7 @@ export class Request
 
 		return body
 
-	@fromApiGateway: (input, context) ->
+	@fromApiGateway: (input) ->
 		data = {
 			path: 		input.path
 			method: 	input.httpMethod
@@ -91,7 +88,7 @@ export class Request
 			params: 	input.pathParameters
 			query:		input.queryStringParameters
 			body:		input.body
-			ip:			context.identity.sourceIp
+			ip:			input.requestContext.identity.sourceIp
 		}
 
 		return new Request data
