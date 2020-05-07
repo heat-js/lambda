@@ -91,7 +91,7 @@ export class Sns
 					StringValue: value
 				}
 
-			params.MessageAttributes = messageAttributes
+		params.MessageAttributes = messageAttributes
 
 		return @client.publish params
 			.promise()
