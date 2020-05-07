@@ -1,7 +1,7 @@
 {
   "name": "@heat/lambda",
   "main": "index",
-  "version": "0.7.10",
+  "version": "0.7.11",
   "license": "MIT",
   "private": false,
   "repository": {
@@ -18,6 +18,11 @@
     "major": "yarn version --major; ./node_modules/.bin/ncp",
     "deploy": "yarn version; ./node_modules/.bin/ncp"
   },
+  "jest": {
+    "preset": "jest-preset-coffeescript",
+    "testEnvironment": "node",
+    "rootDir": "./test/"
+  },
   "dependencies": {
     "@bugsnag/js": "^6.3.0",
     "@heat/container": "^0.0.1",
@@ -25,6 +30,10 @@
     "lambda-warmer": "^1.1.2"
   },
   "devDependencies": {
-    "@heat/npm-coffee-publisher": "^0.1.6"
+    "@babel/core": "^7.5.0",
+    "@heat/npm-coffee-publisher": "^0.1.6",
+    "coffeescript": "^2.5.1",
+    "jest": "^24.8.0",
+    "jest-preset-coffeescript": "1.1.1"
   }
 }

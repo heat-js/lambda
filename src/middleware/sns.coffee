@@ -77,9 +77,14 @@ export class Sns
 		else
 			throw new TypeError 'Invalid SNS message type'
 
-		if attributes and Object.keys(attributes).length
-			messageAttributes = {}
+		messageAttributes = {
+			snsTopic: {
+				DataType: 	'String'
+				StringValue: "#{service}__#{topic}"
+			}
+		}
 
+		if attributes and Object.keys(attributes).length
 			for key, value of attributes
 				messageAttributes[key] = {
 					DataType: 'String'
