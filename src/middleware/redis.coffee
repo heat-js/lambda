@@ -5,6 +5,7 @@ import Redis 		from 'redis'
 export default class RedisProvider extends Middleware
 
 	constructor: (@options) ->
+		super()
 
 	value: (app, configName, envName, defaultValue) ->
 		return (
