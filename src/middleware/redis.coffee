@@ -1,8 +1,8 @@
 
 import Middleware 	from './abstract'
-import Redis 		from 'redis'
+import redis 		from 'redis'
 
-export default class Redis extends Middleware
+export default class RedisMiddleware extends Middleware
 
 	constructor: (@options) ->
 		super()
