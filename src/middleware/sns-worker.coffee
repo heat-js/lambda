@@ -1,4 +1,6 @@
 
+import ViewableError from '../error/viewable-error'
+
 export default class SnsWorker
 
 	handle: (app, next) ->
@@ -30,4 +32,11 @@ export default class SnsWorker
 
 		app.value 'records', payloads
 
-		await next()
+		try
+			await next()
+		catch error
+			if error instanceof ViewableError
+				if app.has 'log'
+					app.log error
+
+			throw error
