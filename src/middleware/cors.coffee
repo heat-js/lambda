@@ -5,6 +5,7 @@ import ViewableError 	from '../error/viewable-error'
 export default class Cors extends Middleware
 
 	constructor: ({ @blocking = false, @origins }) ->
+		super()
 
 	getOrigins: (app) ->
 		return (
