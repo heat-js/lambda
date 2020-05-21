@@ -21,6 +21,9 @@ export default class Cors extends Middleware
 		allowed = @getOrigins app
 		origin 	= app.request.get 'origin'
 
+		if not Array.isArray allowed
+			throw new TypeError 'CORS origins has not been set'
+
 		if origin and allowed.includes origin
 			app.response.set 'access-control-expose-headers', [
 				'content-length'
@@ -38,7 +41,7 @@ export default class Cors extends Middleware
 			return
 
 		if @blocking
-			error = new ViewableError 'CORS origin not allowed'
+			error = new ViewableError 'Origin not allowed'
 			error.status = 403
 			throw error
 
