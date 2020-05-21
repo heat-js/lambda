@@ -18,7 +18,7 @@ export default class Cors extends Middleware
 		)
 
 	handle: (app, next) ->
-		allowed = @getOrigins()
+		allowed = @getOrigins app
 		origin 	= app.request.get 'origin'
 
 		if origin and allowed.includes origin
