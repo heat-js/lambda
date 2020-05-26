@@ -51,14 +51,14 @@ export class Validator
 					throw new Error 'No validation rule found for field: ' + field
 
 		else if fields instanceof Object
-			for key, value of fields
+			for field, value of fields
 				if typeof value is 'string'
 					if rule = @rules[field]
 						schema[field] = rule
 					else
 						throw new Error 'No validation rule found for field: ' + field
 				else
-					schema[key] = value
+					schema[field] = value
 
 			return schema
 
