@@ -42,7 +42,8 @@ export class Validator
 			throw new ValidationError message
 
 	getValidationSchema: (fields) ->
-		schema = joi.object()
+		schema = joi.object().required()
+
 		if Array.isArray fields
 			for field in fields
 				if rule = @rules[field]
