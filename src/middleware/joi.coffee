@@ -43,19 +43,23 @@ export class Validator
 
 	getValidationSchema: (fields) ->
 		if Array.isArray fields
-			schema = {}
+			throw new TypeError (
+				"Argument fields does not support the array type anymore. " +
+				"Please migrate the code to an object map."
+			)
 
-			for field in fields
+		if not ( fields instanceof Object )
+			throw new TypeError 'Argument fields must be an object'
+
+		schema = joi.object()
+		for key, value of fields
+			if typeof value is 'string'
 				if rule = @rules[field]
 					schema[field] = rule
 				else
 					throw new Error 'No validation rule found for field: ' + field
-
-		else if fields instanceof Object
-			schema = fields
-
-		else
-			throw new TypeError 'Argument fields must be an object or array'
+			else
+				schema[key] = value
 
 		return schema
 
