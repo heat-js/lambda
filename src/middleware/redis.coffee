@@ -1,8 +1,8 @@
 
 import Middleware 	from './abstract'
-import Redis 		from 'redis'
+import redis 		from 'redis'
 
-export default class RedisProvider extends Middleware
+export default class RedisMiddleware extends Middleware
 
 	constructor: (@options) ->
 		super()
@@ -19,7 +19,6 @@ export default class RedisProvider extends Middleware
 		)
 
 	handle: (app, next) ->
-
 		instance = null
 		app.redis = =>
 			instance = redis.createClient Object.assign {
