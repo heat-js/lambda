@@ -33,6 +33,7 @@ export default class DynamoDBStream
 			oldImage = oldImage and AWS.DynamoDB.Converter.unmarshall oldImage
 
 			return {
+				eventName: record.eventName
 				newImage
 				oldImage
 			}

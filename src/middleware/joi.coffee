@@ -42,7 +42,7 @@ export class Validator
 			throw new ValidationError message
 
 	getValidationSchema: (fields) ->
-		schema = joi.object().required()
+		schema = {}
 
 		if Array.isArray fields
 			for field in fields
@@ -66,7 +66,7 @@ export class Validator
 		else
 			throw new TypeError 'Argument fields must be an object or array'
 
-		return schema
+		return joi.object().required().keys schema
 
 	customErrorMessages: (error) ->
 		if not Array.isArray error.details
