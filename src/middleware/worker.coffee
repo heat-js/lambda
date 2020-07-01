@@ -46,10 +46,14 @@ export default class Worker
 	parseRecord: (record) ->
 		# SNS
 		if record.Sns
-			return JSON.parse record.Sns.Message
+			return {
+				payload: JSON.parse record.Sns.Message
+			}
 
 		# SQS
 		if record.body
-			return JSON.parse record.body
+			return {
+				payload: JSON.parse record.body
+			}
 
 		throw new Error 'Unrecognized record source: ' + JSON.stringify record
