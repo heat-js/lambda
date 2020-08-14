@@ -31,6 +31,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.5.0",
+    "@hapi/joi": "^15.1.1",
     "@heat/npm-coffee-publisher": "^0.1.6",
     "coffeescript": "^2.5.1",
     "jest": "^24.8.0",
