@@ -51,7 +51,7 @@ export class PubSub
 
 	constructor: (@iotData) ->
 
-	publish: ({ topic, id, event, value, qos }) ->
+	publish: ({ topic, id, event, value, qos = 0 }) ->
 		data =
 			e: event
 			v: value
@@ -60,7 +60,7 @@ export class PubSub
 			data.i = id
 
 		return @iotData.publish {
-			qos: qos or 1
+			qos
 			topic
 			payload: JSON.stringify data
 		}

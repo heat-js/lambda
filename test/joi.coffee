@@ -7,9 +7,12 @@ describe 'Test Worker Middleware', ->
 
 	it 'should return lowercase username', ->
 		lambda = handle(
-			new Joi {
-				username: joi.string().max(25).lowercase().required()
-			}
+			(app, next) ->
+				app.rules = {
+					username: joi.string().max(25).lowercase().required()
+				}
+				await next()
+			new Joi [ 'username' ]
 			(app) ->
 				app.output = app.input.username
 		)
