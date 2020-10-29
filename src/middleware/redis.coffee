@@ -39,10 +39,10 @@ export default class RedisMiddleware extends Middleware
 					if options.total_retry_time > ( 1000 * 10 )
 						return new Error 'The redis retry time exhausted'
 
-					if options.attempt > 3
+					if options.attempt > 10
 						return
 
-					return 2000
+					return Math.min options.attempt * 100, 3000
 
 			}, @options
 

@@ -35,11 +35,13 @@ export class Validator
 		schema = @getValidationSchema fields
 
 		try
-			return await @validator.validate input, schema, options
+			result = await @validator.validate input, schema, options
 		catch error
 			message = @customErrorMessages error
 
 			throw new ValidationError message
+
+		return result
 
 	getValidationSchema: (fields) ->
 		schema = {}
