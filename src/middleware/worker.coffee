@@ -44,7 +44,7 @@ export default class Worker
 			throw error
 
 	parseRecord: (record) ->
-		type 		= getRecordType record
+		type 		= @getRecordType record
 		id 			= undefined
 		payload 	= undefined
 		timestamp 	= undefined
