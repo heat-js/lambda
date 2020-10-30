@@ -84,15 +84,6 @@ export default class Worker
 			timestamp 	= Date.parse record.timestamp
 			origin		= record.requestContext.functionArn.split(':')[6]
 
-		console.log {
-			type
-			id
-			payload
-			attributes
-			timestamp
-			origin
-			rawData: record
-		}
 		return {
 			type
 			id
