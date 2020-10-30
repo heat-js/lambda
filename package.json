@@ -1,7 +1,7 @@
 {
   "name": "@heat/lambda",
   "main": "index",
-  "version": "0.8.14",
+  "version": "0.8.15",
   "license": "MIT",
   "private": false,
   "repository": {
@@ -13,10 +13,10 @@
   },
   "scripts": {
     "test": "./node_modules/.bin/jest",
-    "patch": "yarn version --patch; ./node_modules/.bin/ncp",
-    "minor": "yarn version --minor; ./node_modules/.bin/ncp",
-    "major": "yarn version --major; ./node_modules/.bin/ncp",
-    "deploy": "yarn version; ./node_modules/.bin/ncp"
+    "patch": "if yarn test; then yarn version --patch; ./node_modules/.bin/ncp; fi",
+    "minor": "if yarn test; then yarn version --minor; ./node_modules/.bin/ncp; fi",
+    "major": "if yarn test; then yarn version --major; ./node_modules/.bin/ncp; fi",
+    "deploy": "if yarn test; then yarn version; ./node_modules/.bin/ncp; fi"
   },
   "jest": {
     "preset": "jest-preset-coffeescript",

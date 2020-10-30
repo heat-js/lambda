@@ -43,7 +43,7 @@ export default class Worker
 
 			throw error
 
-	parseRecord: (record) ->
+	parseRecord: (record) =>
 		type 		= @getRecordType record
 		id 			= undefined
 		payload 	= undefined
@@ -84,6 +84,15 @@ export default class Worker
 			timestamp 	= Date.parse record.timestamp
 			origin		= record.requestContext.functionArn.split(':')[6]
 
+		console.log {
+			type
+			id
+			payload
+			attributes
+			timestamp
+			origin
+			rawData: record
+		}
 		return {
 			type
 			id

@@ -22,6 +22,7 @@ describe 'Test Worker Middleware', ->
 				"Sns": {
 					"Type": "Notification",
 					"MessageId": "f553fe9c-306b-5be2-ab89-a9ea5aea2afc",
+					"Timestamp": "2019-01-02T12:45:07.000Z",
 					"TopicArn": "arn:aws:sns:eu-west-1:519177113932:betting__bet",
 					"Subject": null,
 					"Message": "{\"userId\":123}",
