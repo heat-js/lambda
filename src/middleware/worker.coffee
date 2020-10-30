@@ -66,7 +66,7 @@ export default class Worker
 		if type is 'sqs'
 			id			= record.messageId
 			payload 	= JSON.parse record.body
-			timestamp 	= record.attributes.SentTimestamp
+			timestamp 	= Number record.attributes.SentTimestamp
 
 			msgAttr = record.messageAttributes
 			for key, attribute of msgAttr
