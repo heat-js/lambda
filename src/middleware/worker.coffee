@@ -32,7 +32,7 @@ export default class Worker
 		# ----------------------------------------------------
 		# Batch of work processed
 
-		app.value 'records', records.map @parseRecord
+		app.value 'records', records.map @parseRecord.bind @
 
 		try
 			await next()
