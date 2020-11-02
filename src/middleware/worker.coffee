@@ -63,7 +63,7 @@ export default class Worker
 
 		return {
 			id: 		record.messageId
-			payload: 	JSON.parse record.Sns.Message
+			payload: 	JSON.parse record.body
 			timestamp:	Number record.attributes.SentTimestamp
 			attributes
 			raw:		record
