@@ -46,77 +46,39 @@ export default class Worker
 	parseRecord: (record) ->
 		# SNS
 		if record.Sns
-			return {
-				payload: JSON.parse record.Sns.Message
-			}
+			return @parseSnsRecord record
 
 		# SQS
 		if record.body
-			return {
-				payload: JSON.parse record.body
-			}
+			return @parseSqsRecord record
 
 		throw new Error 'Unrecognized record source: ' + JSON.stringify record
 
-	# parseRecord: (record) =>
-	# 	type 		= @getRecordType record
-	# 	id 			= undefined
-	# 	payload 	= undefined
-	# 	timestamp 	= undefined
-	# 	origin		= undefined
-	# 	attributes 	= {}
+	parseSqsRecord: (record) ->
+		attributes = {}
+		for key, attribute of record.messageAttributes
+			switch attribute.dataType
+				when 'String'
+					attributes[key] = attribute.stringValue
 
-	# 	# SNS
-	# 	if type is 'sns'
-	# 		id			= record.Sns.MessageId
-	# 		payload 	= JSON.parse record.Sns.Message
-	# 		timestamp 	= Date.parse record.Sns.Timestamp
-	# 		origin		= record.Sns.TopicArn.split(':')[5]
+		return {
+			id: 		record.messageId
+			payload: 	JSON.parse record.Sns.Message
+			timestamp:	Number record.attributes.SentTimestamp
+			attributes
+			raw:		record
+		}
 
-	# 		msgAttr = record.Sns.MessageAttributes
-	# 		for key, attribute of msgAttr
-	# 			attributes[key] = attribute.Value
+	parseSnsRecord: (record) ->
+		attributes = {}
+		for key, attribute of record.Sns.MessageAttributes
+			attributes[key] = attribute.Value
 
-	# 	# SQS
-	# 	if type is 'sqs'
-	# 		id			= record.messageId
-	# 		payload 	= JSON.parse record.body
-	# 		timestamp 	= Number record.attributes.SentTimestamp
-
-	# 		msgAttr = record.messageAttributes
-	# 		for key, attribute of msgAttr
-	# 			switch attribute.dataType
-	# 				when 'String'
-	# 					attributes[key] = attribute.stringValue
-
-	# 		if attributes.queue
-	# 			origin = attributes.queue
-
-	# 	# Async Lambda
-	# 	if type is 'lambda'
-	# 		id			= record.requestContext.requestId
-	# 		payload 	= record.requestPayload
-	# 		timestamp 	= Date.parse record.timestamp
-	# 		origin		= record.requestContext.functionArn.split(':')[6]
-
-	# 	return {
-	# 		type
-	# 		id
-	# 		payload
-	# 		attributes
-	# 		timestamp
-	# 		origin
-	# 		rawData: record
-	# 	}
-
-	# getRecordType: (record) ->
-	# 	if record.Sns
-	# 		return 'sns'
-
-	# 	if record.requestContext and record.requestPayload
-	# 		return 'lambda'
-
-	# 	if record.body
-	# 		return 'sqs'
-
-	# 	throw new Error 'Unrecognized record source: ' + JSON.stringify record
+		return {
+			id:			record.Sns.MessageId
+			payload:	JSON.parse record.Sns.Message
+			timestamp:	Date.parse record.Sns.Timestamp
+			topicArn:	record.Sns.TopicArn
+			attributes
+			raw:		record
+		}
