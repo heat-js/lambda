@@ -64,7 +64,7 @@ export default class Worker
 		return {
 			id: 		record.messageId
 			payload: 	JSON.parse record.body
-			timestamp:	Number record.attributes.SentTimestamp
+			timestamp:	Math.floor(Number(record.attributes.SentTimestamp) / 1000)
 			attributes
 			raw:		record
 		}
@@ -77,7 +77,7 @@ export default class Worker
 		return {
 			id:			record.Sns.MessageId
 			payload:	JSON.parse record.Sns.Message
-			timestamp:	Date.parse record.Sns.Timestamp
+			timestamp:	Math.floor(Date.parse(record.Sns.Timestamp) / 1000)
 			topicArn:	record.Sns.TopicArn
 			attributes
 			raw:		record
