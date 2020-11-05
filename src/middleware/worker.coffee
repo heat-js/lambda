@@ -64,7 +64,7 @@ export default class Worker
 		return {
 			id: 		record.messageId
 			payload: 	JSON.parse record.body
-			date:		(new Date(record.attributes.SentTimestamp)).toISOString()
+			date:		(new Date(Number(record.attributes.SentTimestamp))).toISOString()
 			attributes
 			raw:		record
 		}
