@@ -267,10 +267,10 @@
   resolved "https://registry.yarnpkg.com/@heat/container/-/container-0.0.1.tgz#174a9f1732498085e622a3da265f9a3077da9a61"
   integrity sha512-lMImDiqUUmJ0OC8UNFsQXgaju1yPtDJAXJUwFskJSGu1EEp4Euo06/TmmzqSpP8PnW2rZeuj4w8uENe+GRcvcQ==
 
-"@heat/npm-coffee-publisher@^0.1.6":
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/@heat/npm-coffee-publisher/-/npm-coffee-publisher-0.1.6.tgz#2418cb0fa288af6bd4e5bbc18474da24ad8e5be9"
-  integrity sha512-nNzXMHab6SOgoPgncvSG1UuYsveYcbqz9SNjHN6laWbNQnyAfH+DSQml6Xl6V679kCy1Q4AiBTEQTbw6MLTgnQ==
+"@heat/npm-coffee-publisher@^0.1.7":
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/@heat/npm-coffee-publisher/-/npm-coffee-publisher-0.1.7.tgz#36044245371c49097e714881d2fa3d12de623452"
+  integrity sha512-+mxRfwfMwVDRWKgBPcEL5X/FXLuPECkTtxXNZr1yXZOZQos1vsbQ+at2BZb0WhwfGgHauFpREMPA7oRX2hlsYg==
   dependencies:
     "@babel/core" "^7.4.0"
     babel-plugin-transform-es2015-modules-commonjs "^6.26.2"
