@@ -1,6 +1,5 @@
 
 import Middleware 	from './abstract'
-import AWS			from 'aws-sdk'
 import crypto		from 'crypto'
 
 export default class StatisticsMiddleware extends Middleware

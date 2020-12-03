@@ -1,8 +1,8 @@
 
 import Middleware 		from './abstract'
-import AWS 				from 'aws-sdk'
+import SSM 				from 'aws-sdk/clients/ssm'
 
-export default class SSM extends Middleware
+export default class SsmMiddleware extends Middleware
 
 	constructor: (@saveInMemory = true) ->
 		super()
@@ -20,7 +20,7 @@ export default class SSM extends Middleware
 
 	handle: (app, next) ->
 		app.ssm = =>
-			return new AWS.SSM {
+			return new SSM {
 				apiVersion: '2014-11-06'
 				region: 	@region app
 			}

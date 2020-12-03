@@ -1,8 +1,9 @@
 
 import Middleware	from './abstract'
-import AWS			from 'aws-sdk'
+import Iot			from 'aws-sdk/clients/iot'
+import IotData		from 'aws-sdk/clients/iotdata'
 
-export default class Iot extends Middleware
+export default class IotMiddleware extends Middleware
 
 	endpoint: (app) ->
 		return (
@@ -30,14 +31,14 @@ export default class Iot extends Middleware
 
 	handle: (app, next) ->
 		app.iot = ->
-			return new AWS.Iot {
+			return new Iot {
 				apiVersion: '2015-05-28'
 			}
 
 		endpoint = await @endpoint app
 
 		app.iotData = ->
-			return new AWS.IotData {
+			return new IotData {
 				endpoint
 				apiVersion: '2015-05-28'
 			}

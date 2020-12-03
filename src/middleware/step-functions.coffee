@@ -1,6 +1,6 @@
 
-import Middleware 	from './abstract'
-import AWS			from 'aws-sdk'
+import Middleware 		from './abstract'
+import AwsStepFunctions from 'aws-sdk/clients/stepfunctions'
 
 export default class StepFunctionsMiddleware extends Middleware
 
@@ -31,7 +31,7 @@ export default class StepFunctionsMiddleware extends Middleware
 			region 		= @region app
 			accountId 	= @accountId app
 
-			client = new AWS.StepFunctions {
+			client = new AwsStepFunctions {
 				apiVersion: '2016-11-23'
 				region
 			}

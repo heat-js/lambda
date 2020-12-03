@@ -1,6 +1,6 @@
 
 import Middleware 	from './abstract'
-import AWS			from 'aws-sdk'
+import SQS			from 'aws-sdk/clients/sqs'
 
 export default class SqsMiddleware extends Middleware
 
@@ -17,7 +17,7 @@ export default class SqsMiddleware extends Middleware
 
 	handle: (app, next) ->
 		app.sqsClient = =>
-			return new AWS.SQS {
+			return new SQS {
 				apiVersion: '2012-11-05'
 				region: 	@region app
 			}

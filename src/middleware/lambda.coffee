@@ -1,10 +1,9 @@
 
-
 import Middleware 		from './abstract'
-import AWS				from 'aws-sdk'
+import Lambda			from 'aws-sdk/clients/lambda'
 import ViewableError 	from '../error/viewable-error'
 
-export default class Lambda extends Middleware
+export default class LambdaMiddleware extends Middleware
 
 	region: (app) ->
 		return (
@@ -20,7 +19,7 @@ export default class Lambda extends Middleware
 	handle: (app, next) ->
 
 		app.lambda = =>
-			lambda = new AWS.Lambda {
+			lambda = new Lambda {
 				apiVersion: '2015-03-31'
 				region: 	@region app
 			}

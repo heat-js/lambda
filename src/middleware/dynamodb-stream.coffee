@@ -1,5 +1,5 @@
 
-import AWS from 'aws-sdk'
+import DynamoDB from 'aws-sdk/clients/dynamodb'
 
 export default class DynamoDBStream
 
@@ -27,10 +27,10 @@ export default class DynamoDBStream
 
 		app.value 'records', records.map (record) ->
 			newImage = record.dynamodb.NewImage
-			newImage = newImage and AWS.DynamoDB.Converter.unmarshall newImage
+			newImage = newImage and DynamoDB.Converter.unmarshall newImage
 
 			oldImage = record.dynamodb.OldImage
-			oldImage = oldImage and AWS.DynamoDB.Converter.unmarshall oldImage
+			oldImage = oldImage and DynamoDB.Converter.unmarshall oldImage
 
 			return {
 				eventName: record.eventName

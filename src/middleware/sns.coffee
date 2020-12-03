@@ -1,6 +1,6 @@
 
 import Middleware 	from './abstract'
-import AWS			from 'aws-sdk'
+import SNS			from 'aws-sdk/clients/sns'
 
 export default class SnsMiddleware extends Middleware
 
@@ -30,7 +30,7 @@ export default class SnsMiddleware extends Middleware
 			region 		= @region app
 			accountId 	= @accountId app
 
-			client = new AWS.SNS {
+			client = new SNS {
 				apiVersion: '2016-11-23'
 				region
 			}
