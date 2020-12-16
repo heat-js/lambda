@@ -5,7 +5,7 @@ import joi 				from '@hapi/joi'
 
 export default class Joi extends Middleware
 
-	constructor: (@fields) ->
+	constructor: (@fields, @options = {}) ->
 		super()
 
 	handle: (app, next) ->
@@ -14,7 +14,7 @@ export default class Joi extends Middleware
 			rules  = if app.has 'rules' then app.rules else {}
 			errorMessages = if app.has 'errorMessages' then app.errorMessages else {}
 
-			return new Validator joi, rules, errorMessages
+			return new Validator joi, rules, errorMessages, @options
 
 		app.validate = ->
 			return app.joi.validate.bind app.joi
@@ -28,11 +28,13 @@ export default class Joi extends Middleware
 
 export class Validator
 
-	constructor: (@validator, @rules, @errorMessages) ->
+	constructor: (@validator, @rules, @errorMessages, @options = {}) ->
 
-	validate: (input, fields, options) ->
+	validate: (input, fields, options = {}) ->
 
 		schema = @getValidationSchema fields
+
+		options = Object.assign {}, @options, options
 
 		try
 			result = await @validator.validate input, schema, options

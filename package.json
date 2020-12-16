@@ -1,7 +1,7 @@
 {
   "name": "@heat/lambda",
   "main": "index",
-  "version": "0.8.25",
+  "version": "0.8.26",
   "license": "MIT",
   "private": false,
   "repository": {
