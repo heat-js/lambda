@@ -1,7 +1,7 @@
 {
   "name": "@heat/lambda",
   "main": "index",
-  "version": "0.8.27",
+  "version": "0.8.28",
   "license": "MIT",
   "private": false,
   "repository": {
@@ -33,6 +33,7 @@
     "@babel/core": "^7.5.0",
     "@hapi/joi": "^15.1.1",
     "@heat/npm-coffee-publisher": "^0.1.7",
+    "aws-sdk": "^2.824.0",
     "coffeescript": "^2.5.1",
     "jest": "^24.8.0",
     "jest-preset-coffeescript": "1.1.1"
