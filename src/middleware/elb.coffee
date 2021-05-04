@@ -6,6 +6,7 @@ export default class ELB
 	handle: (app, next) ->
 
 		app.request = Object.freeze Object.assign {}, app.input
+		app.statusCode = 200
 		app.headers = {
 			'content-type':					'application/json'
 			'access-control-allow-origin':	'*'
@@ -13,21 +14,22 @@ export default class ELB
 			'access-control-allow-methods': 'POST, GET, OPTIONS'
 		}
 
-		try
-			app.input = JSON.parse app.request.body or '{}'
+		if app.request.body
+			try
+				app.input = JSON.parse app.request.body
 
-		catch error
-			return app.output = {
-				statusCode: 400
-				headers: app.headers
-				body: JSON.stringify {
-					message: error.message.slice search.length
+			catch error
+				return app.output = {
+					statusCode: 400
+					headers: app.headers
+					body: JSON.stringify {
+						message: 'Invalid request body'
+					}
 				}
-			}
 
 		app.input = {
-			...app.request.queryStringParameters
-			...app.input
+			...( app.request.queryStringParameters or {} )
+			...( app.input or {} )
 		}
 
 		search = '[viewable] '
@@ -38,9 +40,9 @@ export default class ELB
 		catch error
 			if error instanceof ViewableError or 0 is error.message.indexOf search
 				return app.output = {
-					statusCode: 400
+					statusCode: error.code or 400
 					headers: app.headers
-					body: JSON.stringify {
+					body: JSON.stringify if error.response then error.response() else {
 						message: error.message.slice search.length
 					}
 				}
@@ -59,7 +61,7 @@ export default class ELB
 		body = if app.has 'output' then app.output else {}
 
 		return app.output = {
-			statusCode: 200
+			statusCode: app.statusCode
 			headers: app.headers
 			body: JSON.stringify body
 		}
