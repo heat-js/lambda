@@ -3,6 +3,25 @@ import ViewableError from '../error/viewable-error'
 
 export default class ELB
 
+	isViewableError: (error) ->
+		return (
+			error instanceof ViewableError or
+			(
+				typeof error.message is 'string' and
+				0 is error.message.indexOf '[viewable]'
+			)
+		)
+
+	viewableErrorResponse: (error) ->
+		if error.response
+			return error.response()
+
+		search = '[viewable] '
+		if typeof error.message is 'string' and 0 is error.message.indexOf search
+			return { message: error.message.slice search.length }
+
+		return { message: error.message }
+
 	handle: (app, next) ->
 
 		app.request = Object.freeze Object.assign {}, app.input
@@ -38,13 +57,11 @@ export default class ELB
 			await next()
 
 		catch error
-			if error instanceof ViewableError or 0 is error.message.indexOf search
+			if @isViewableError error
 				return app.output = {
-					statusCode: error.code or 400
-					headers: app.headers
-					body: JSON.stringify if error.response then error.response() else {
-						message: error.message.slice search.length
-					}
+					statusCode:	error.code or 400
+					headers:	app.headers
+					body:		JSON.stringify @viewableErrorResponse error
 				}
 			else
 				console.error error
