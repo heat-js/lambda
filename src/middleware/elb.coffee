@@ -13,9 +13,6 @@ export default class ELB
 		)
 
 	viewableErrorResponse: (error) ->
-		if error.response
-			return error.response()
-
 		search = '[viewable] '
 		if typeof error.message is 'string' and 0 is error.message.indexOf search
 			return { message: error.message.slice search.length }
@@ -33,18 +30,28 @@ export default class ELB
 			'access-control-allow-methods': 'POST, GET, OPTIONS'
 		}
 
+		app.value 'formatErrorResponse', (error) =>
+			if @isViewableError error
+				return {
+					statusCode:	error.code or 400
+					headers:	app.headers
+					body:		JSON.stringify @viewableErrorResponse error
+				}
+
+			return {
+				statusCode: 500
+				headers: app.headers
+				body: JSON.stringify {
+					message: 'Internal server error'
+				}
+			}
+
 		if app.request.body
 			try
 				app.input = JSON.parse app.request.body
 
 			catch error
-				return app.output = {
-					statusCode: 400
-					headers: app.headers
-					body: JSON.stringify {
-						message: 'Invalid request body'
-					}
-				}
+				return app.output = app.formatErrorResponse new ViewableError 'Invalid request body'
 
 		app.input = {
 			...( app.request.queryStringParameters or {} )
@@ -57,28 +64,34 @@ export default class ELB
 			await next()
 
 		catch error
-			if @isViewableError error
-				return app.output = {
-					statusCode:	error.code or 400
-					headers:	app.headers
-					body:		JSON.stringify @viewableErrorResponse error
-				}
-			else
+			if not @isViewableError error
 				console.error error
 				await app.log error
 
-				return app.output = {
-					statusCode: 500
-					headers: app.headers
-					body: JSON.stringify {
-						message: 'Internal server error'
-					}
-				}
+			return app.output = app.formatErrorResponse error
+
+			# if @isViewableError error
+			# 	return app.output = {
+			# 		statusCode:	error.code or 400
+			# 		headers:	app.headers
+			# 		body:		JSON.stringify @viewableErrorResponse error
+			# 	}
+			# else
+			# 	console.error error
+			# 	await app.log error
+
+			# 	return app.output = {
+			# 		statusCode: 500
+			# 		headers: app.headers
+			# 		body: JSON.stringify if error.response then error.response() else {
+			# 			message: 'Internal server error'
+			# 		}
+			# 	}
 
 		body = if app.has 'output' then app.output else {}
 
 		return app.output = {
-			statusCode: app.statusCode
-			headers: app.headers
-			body: JSON.stringify body
+			statusCode:	app.statusCode
+			headers:	app.headers
+			body:		JSON.stringify body
 		}
