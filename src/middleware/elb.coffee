@@ -1,5 +1,6 @@
 
-import ViewableError from '../error/viewable-error'
+import ViewableError	from '../error/viewable-error'
+import Big				from 'big.js'
 
 export default class ELB
 
@@ -29,6 +30,9 @@ export default class ELB
 			'access-control-allow-headers': 'content-type, content-length'
 			'access-control-allow-methods': 'POST, GET, OPTIONS'
 		}
+
+		app.value 'formatBodyResponse', (body) ->
+			return JSON.stringify body
 
 		app.value 'formatErrorResponse', (error) =>
 			if @isViewableError error
@@ -93,5 +97,5 @@ export default class ELB
 		return app.output = {
 			statusCode:	app.statusCode
 			headers:	app.headers
-			body:		JSON.stringify body
+			body:		app.formatBodyResponse body
 		}
