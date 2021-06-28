@@ -30,6 +30,12 @@ export default class ELB
 			'access-control-allow-methods': 'POST, GET, OPTIONS'
 		}
 
+		app.value 'formatBodyRequest', (body) ->
+			return JSON.parse body
+
+		app.value 'formatBodyResponse', (body) ->
+			return JSON.stringify body
+
 		app.value 'formatErrorResponse', (error) =>
 			if @isViewableError error
 				return {
@@ -48,7 +54,7 @@ export default class ELB
 
 		if app.request.body
 			try
-				app.input = JSON.parse app.request.body
+				app.input = app.formatBodyRequest app.request.body
 
 			catch error
 				return app.output = app.formatErrorResponse new ViewableError 'Invalid request body'
@@ -93,5 +99,5 @@ export default class ELB
 		return app.output = {
 			statusCode:	app.statusCode
 			headers:	app.headers
-			body:		JSON.stringify body
+			body:		app.formatBodyResponse body
 		}
