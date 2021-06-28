@@ -1,6 +1,5 @@
 
-import ViewableError	from '../error/viewable-error'
-import Big				from 'big.js'
+import ViewableError from '../error/viewable-error'
 
 export default class ELB
 
@@ -31,6 +30,9 @@ export default class ELB
 			'access-control-allow-methods': 'POST, GET, OPTIONS'
 		}
 
+		app.value 'formatBodyRequest', (body) ->
+			return JSON.parse body
+
 		app.value 'formatBodyResponse', (body) ->
 			return JSON.stringify body
 
@@ -52,7 +54,7 @@ export default class ELB
 
 		if app.request.body
 			try
-				app.input = JSON.parse app.request.body
+				app.input = app.formatBodyRequest app.request.body
 
 			catch error
 				return app.output = app.formatErrorResponse new ViewableError 'Invalid request body'
