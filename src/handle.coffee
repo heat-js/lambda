@@ -6,8 +6,6 @@ import EventEmitter from 'events'
 
 export default (middlewares...) ->
 
-	console.log 'hello world'
-
 	# middlewares.unshift new Warmer
 
 	fn 		= compose middlewares
