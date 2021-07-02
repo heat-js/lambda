@@ -6,7 +6,8 @@ export default class CacheMiddleware
 	handle: (app, next) ->
 
 		app.cache = =>
-			limit = app.context.memoryLimitInMB * @maxMemoryUsageRatio
+			limit = app.context.memoryLimitInMB or 128
+			limit = limit * @maxMemoryUsageRatio
 			return new Cache limit
 
 		await next()
