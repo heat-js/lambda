@@ -1,4 +1,6 @@
 
+singleton = null
+
 export default class CacheMiddleware
 
 	constructor: (@maxMemoryUsageRatio = 2 / 3) ->
@@ -6,9 +8,12 @@ export default class CacheMiddleware
 	handle: (app, next) ->
 
 		app.cache = =>
-			limit = app.context.memoryLimitInMB or 128
-			limit = limit * @maxMemoryUsageRatio
-			return new Cache limit
+			if not singleton
+				limit = app.context.memoryLimitInMB or 128
+				limit = limit * @maxMemoryUsageRatio
+				singleton = new Cache limit
+
+			return singleton
 
 		await next()
 
