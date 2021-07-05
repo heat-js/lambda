@@ -1,5 +1,6 @@
 
-import { Cache } from '../src/middleware/cache'
+import handle 		from '../src/handle'
+import Middleware, { Cache } from '../src/middleware/cache'
 
 describe 'Cache Middleware', ->
 
@@ -98,3 +99,35 @@ describe 'Cache Middleware', ->
 	# 		# 	.toStrictEqual value
 
 	# 	return
+
+	it 'should work with the Middleware', ->
+		lambda1 = handle(
+			new Middleware
+			(app) ->
+				cache = app.get 'cache', 'ns'
+				cache.set 'foo', 'bar'
+		)
+
+		lambda2 = handle(
+			new Middleware
+			(app) ->
+				cache = app.get 'cache', 'ns'
+				app.output = cache.get 'foo'
+		)
+
+		lambda3 = handle(
+			new Middleware
+			(app) ->
+				cache = app.cache
+				app.output = cache.get 'foo'
+		)
+
+		await lambda1()
+		result = await lambda2()
+
+		expect result
+			.toBe 'bar'
+
+		result = await lambda3()
+		expect result
+			.toBeUndefined()

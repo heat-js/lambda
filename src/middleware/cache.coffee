@@ -1,19 +1,23 @@
 
-singleton = null
+import Middleware from './abstract'
 
-export default class CacheMiddleware
+singleton = {}
+
+export default class CacheMiddleware extends Middleware
 
 	constructor: (@maxMemoryUsageRatio = 2 / 3) ->
+		super()
 
 	handle: (app, next) ->
 
-		app.cache = =>
-			if not singleton
+		app.factory 'cache', (_, namespace = 'default') =>
+			instance = singleton[ namespace ]
+			if not instance
 				limit = app.context.memoryLimitInMB or 128
 				limit = limit * @maxMemoryUsageRatio
-				singleton = new Cache limit
+				instance = singleton[ namespace ] = new Cache limit
 
-			return singleton
+			return instance
 
 		await next()
 
