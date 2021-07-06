@@ -46,6 +46,9 @@ export class Validator
 	getValidationSchema: (fields) ->
 		schema = {}
 
+		if fields.isJoi
+			return fields
+
 		if Array.isArray fields
 			for field in fields
 				if rule = @rules[field]

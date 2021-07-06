@@ -62,7 +62,7 @@ describe 'Cache Middleware', ->
 			.not.toBe value
 
 	it 'should remove values after memory limit is reached', ->
-		cache = new Cache 1
+		cache = new Cache { memoryLimit: 0.01 }
 		cache.set 'key-1', true
 
 		expect cache.size()
