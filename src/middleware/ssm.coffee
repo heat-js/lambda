@@ -48,7 +48,7 @@ export default class SsmMiddleware extends Middleware
 				Names: names
 				WithDecryption: true
 			}
-			console.log names
+
 			result = await client.getParameters(params).promise()
 
 			if result.InvalidParameters and result.InvalidParameters.length

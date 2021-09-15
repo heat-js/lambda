@@ -61,6 +61,14 @@ describe 'Cache Middleware', ->
 		expect cache.get 'key'
 			.not.toBe value
 
+	it 'should not copy of the data with cloning off', ->
+		value = {}
+		cache = new Cache { useClones: false }
+		cache.set 'key', value
+
+		expect cache.get 'key'
+			.toBe value
+
 	it 'should remove values after memory limit is reached', ->
 		cache = new Cache { memoryLimit: 0.01 }
 		cache.set 'key-1', true
@@ -75,6 +83,15 @@ describe 'Cache Middleware', ->
 
 		expect cache.has 'key-1'
 			.toBe false
+
+	it 'should be able to disable memory limit', ->
+		cache = new Cache { memoryLimit: 0 }
+
+		for i in [ 0...100 ]
+			cache.set i, true
+
+		expect cache.size()
+			.toBe 100
 
 	# it 'should throw on invalid values', ->
 	# 	class TestClass
@@ -100,7 +117,7 @@ describe 'Cache Middleware', ->
 
 	# 	return
 
-	it 'should work with the Middleware', ->
+	it 'should work with the Middleware class', ->
 		lambda1 = handle(
 			new Middleware
 			(app) ->

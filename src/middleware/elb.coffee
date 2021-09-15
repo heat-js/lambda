@@ -30,13 +30,19 @@ export default class ELB
 			'access-control-allow-methods': 'POST, GET, OPTIONS'
 		}
 
-		app.value 'formatBodyRequest', (body) ->
+		fallback = (name, callback) ->
+			if app.has name
+				return app.get name
+
+			return callback
+
+		formatBodyRequest = fallback 'formatBodyRequest', (body) ->
 			return JSON.parse body
 
-		app.value 'formatBodyResponse', (body) ->
+		formatBodyResponse = fallback 'formatBodyResponse', (body) ->
 			return JSON.stringify body
 
-		app.value 'formatErrorResponse', (error) =>
+		formatErrorResponse = fallback 'formatErrorResponse', (error) =>
 			if @isViewableError error
 				return {
 					statusCode:	error.code or 400
@@ -54,17 +60,15 @@ export default class ELB
 
 		if app.request.body
 			try
-				app.input = app.formatBodyRequest app.request.body
+				app.input = formatBodyRequest app.request.body
 
 			catch error
-				return app.output = app.formatErrorResponse new ViewableError 'Invalid request body'
+				return app.output = formatErrorResponse new ViewableError 'Invalid request body'
 
 		app.input = {
 			...( app.request.queryStringParameters or {} )
 			...( app.input or {} )
 		}
-
-		search = '[viewable] '
 
 		try
 			await next()
@@ -74,30 +78,12 @@ export default class ELB
 				console.error error
 				await app.log error
 
-			return app.output = app.formatErrorResponse error
-
-			# if @isViewableError error
-			# 	return app.output = {
-			# 		statusCode:	error.code or 400
-			# 		headers:	app.headers
-			# 		body:		JSON.stringify @viewableErrorResponse error
-			# 	}
-			# else
-			# 	console.error error
-			# 	await app.log error
-
-			# 	return app.output = {
-			# 		statusCode: 500
-			# 		headers: app.headers
-			# 		body: JSON.stringify if error.response then error.response() else {
-			# 			message: 'Internal server error'
-			# 		}
-			# 	}
+			return app.output = formatErrorResponse error
 
 		body = if app.has 'output' then app.output else {}
 
 		return app.output = {
 			statusCode:	app.statusCode
 			headers:	app.headers
-			body:		app.formatBodyResponse body
+			body:		formatBodyResponse body
 		}
