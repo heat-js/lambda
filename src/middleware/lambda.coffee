@@ -47,11 +47,10 @@ export class LambdaInvoker
 
 		if typeof response is 'object' and response isnt null and response.errorMessage
 			if reflectViewableErrors and ( response.errorType is 'ViewableError' or 0 is response.errorMessage.indexOf '[viewable] ' )
-				ErrorType = ViewableError
+				error = new ViewableError response.errorMessage
 			else
-				ErrorType = Error
+				error = new Error response.errorMessage.replace '[viewable] ', ''
 
-			error = new ErrorType response.errorMessage
 			error.name 		= response.errorType
 			error.response 	= response
 			error.metadata 	= {
