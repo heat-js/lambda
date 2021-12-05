@@ -36,7 +36,7 @@ export class LambdaInvoker
 
 	constructor: (@client) ->
 
-	invoke: ({ service, name, payload }) ->
+	invoke: ({ service, name, payload, reflectViewableErrors = true }) ->
 		result = await @client.invoke {
 			FunctionName: 	"#{service}__#{name}"
 			Payload: 		JSON.stringify payload
@@ -46,7 +46,7 @@ export class LambdaInvoker
 		response = JSON.parse result.Payload
 
 		if typeof response is 'object' and response isnt null and response.errorMessage
-			if response.errorType is 'ViewableError' or 0 is response.errorMessage.indexOf '[viewable] '
+			if reflectViewableErrors and ( response.errorType is 'ViewableError' or 0 is response.errorMessage.indexOf '[viewable] ' )
 				ErrorType = ViewableError
 			else
 				ErrorType = Error

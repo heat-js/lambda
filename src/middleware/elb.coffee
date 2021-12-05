@@ -64,6 +64,8 @@ export default class ELB
 
 			catch error
 				return app.output = formatErrorResponse new ViewableError 'Invalid request body'
+		else
+			app.input = {}
 
 		app.input = {
 			...( app.request.queryStringParameters or {} )
